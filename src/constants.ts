@@ -60,6 +60,58 @@ Dengue IgM|Blood|Red|Immunopathology
 Dengue NS1 Ag|Blood|Red|Immunopathology
 Leptospira IgG (rapid)|Blood|Red|Immunopathology
 Leptospira IgM (rapid)|Blood|Red|Immunopathology
+Serum Biomarkers|Blood|Red|Immunopathology
+AFP Qualitative|Blood|Red|Immunopathology
+AFP Quantitative|Blood|Red|Immunopathology
+Anti-Mullerian Hormone (AMH)|Blood|Red|Immunopathology
+B-hCG, total undiluted|Blood|Red|Immunopathology
+B-hCG, diluted|Blood|Red|Immunopathology
+CA-125, diluted|Blood|Red|Immunopathology
+CA 15-3|Blood|Red|Immunopathology
+CA 19-9, Diluted|Blood|Red|Immunopathology
+CEA, Diluted|Blood|Red|Immunopathology
+DHEA-S|Blood|Red|Immunopathology
+Estradiol|Blood|Red|Immunopathology
+FSH|Blood|Red|Immunopathology
+Insulin|Blood|Red|Immunopathology
+LH|Blood|Red|Immunopathology
+Total PSA|Blood|Red|Immunopathology
+Total PSA, Diluted|Blood|Red|Immunopathology
+Progesterone|Blood|Red|Immunopathology
+Prolactin|Blood|Red|Immunopathology
+RF|Blood|Red|Immunopathology
+SHBG|Blood|Red|Immunopathology
+Testosterone|Blood|Red|Immunopathology
+FT3|Blood|Red|Immunopathology
+FT4|Blood|Red|Immunopathology
+Anti-HAVIgM|Blood|Red|Immunopathology
+Anti-HBcIgM|Blood|Red|Immunopathology
+Anti-Streptococcal O (ASO)|Blood|Red|Immunopathology
+CMV IgG|Blood|Red|Immunopathology
+CMV IgM|Blood|Red|Immunopathology
+Dengue, IgG/IgM|Blood|Red|Immunopathology
+EBV IgG|Blood|Red|Immunopathology
+EBV IgM|Blood|Red|Immunopathology
+HSV 1 IgG|Blood|Red|Immunopathology
+HSV 2 IgG|Blood|Red|Immunopathology
+H. Pylori IgG|Blood|Red|Immunopathology
+HIV Combi Ag/Ab|Blood|Red|Immunopathology
+Leptospira IgG/IgM, rapid|Blood|Red|Immunopathology
+Mumps IgG|Blood|Red|Immunopathology
+RPR, Qualitative|Blood|Red|Immunopathology
+RPR, Quantitative|Blood|Red|Immunopathology
+Salmonella IgG/IgM|Blood|Red|Immunopathology
+Syphilis CMIA|Blood|Red|Immunopathology
+FTA-ABS|Blood|Red|Immunopathology
+Toxoplasma IgG|Blood|Red|Immunopathology
+Toxoplasma IgM|Blood|Red|Immunopathology
+Rubella IgM|Blood|Red|Immunopathology
+Rubella IgG|Blood|Red|Immunopathology
+Rubeola IgG (Measles)|Blood|Red|Immunopathology
+Varicella IgG|Blood|Red|Immunopathology
+IL-6|Blood|Red|Immunopathology
+Cyclosporine|Blood|Red|Immunopathology
+Sirolimus|Blood|Red|Immunopathology
 Cortisol|Blood|Red|Nuclear Medicine
 25-Hydroxy Vit D|Blood|Red|Nuclear Medicine
 iPTH|Blood|Red|Nuclear Medicine
@@ -115,14 +167,19 @@ Tacrolimus|Blood|Purple|Immunopathology
 Blood Typing|Blood|Purple|Blood Bank
 Cross-matching|Blood|Purple|Blood Bank
 Coombs Test|Blood|Purple|Blood Bank
+Coombs|Blood|Purple|Blood Bank
 Renin|Blood|Purple|Nuclear Medicine
 ACTH|Blood|Purple|Nuclear Medicine
 CD4|Blood|Purple|SAGIP
 Viral Load|Blood|Purple|SAGIP
 Resistance Test|Blood|Purple|SAGIP
 Blood CS|Blood|Special Bottle|Microbiology
+BCS|Blood|Special Bottle|Microbiology
+Blood culture & sensitivity|Blood|Special Bottle|Microbiology
+Anaerobic Culture|Blood|Anaerobic Culture Bottle|Microbiology
 IGRA|Blood|4 Special Tubes|Immunopathology
 UA|Urine|N/A|Urinalysis
+Urinalysis|Urine|N/A|Urinalysis
 PT (urine)|Urine|N/A|Urinalysis
 UA Albumin|Urine|N/A|Urinalysis
 UA Bilirubin|Urine|N/A|Urinalysis
@@ -179,6 +236,7 @@ TB GeneXpert (CSF)|CSF|N/A|MRL
 HSV PCR (CSF)|CSF|N/A|MRL
 Cytology (CSF)|CSF|N/A|Surgical Pathology
 Fecalysis|Stool|N/A|Clinical Microscopy
+Stool Exam|Stool|N/A|Clinical Microscopy
 FIT|Stool|N/A|Clinical Microscopy
 FOBT|Stool|N/A|Clinical Microscopy
 Crypto/Giardia Ag|Stool|N/A|Clinical Microscopy
@@ -240,9 +298,15 @@ Fungal CS (BF)|Body Fluid|N/A|Microbiology
 India Ink (BF)|Body Fluid|N/A|Microbiology
 KOH Mount (BF)|Body Fluid|N/A|Microbiology
 Gram Stain (Exudate)|Exudate|N/A|Microbiology
+Exudate GS/CS|Exudate|N/A|Microbiology
 TMG Smear|Vaginal Swab|N/A|Microbiology
 Catheter Tip CS|Catheter Tip|N/A|Microbiology
+Catheter Tip CS, MAKI method|Catheter Tip|N/A|Microbiology
 Conjunctival/Corneal Scraping GS/CS|Corneal Scraping|N/A|Microbiology
+Conjunctival/Corneal Scraping|Corneal Scraping|N/A|Microbiology
+MAKI Environmental Culture|Environmental|N/A|Microbiology
+Milk Bank Culture|Milk|N/A|Microbiology
+Respiratory Tract GS/CS|Sputum|N/A|Microbiology
 Cytology (BF)|Body Fluid|N/A|Surgical Pathology
 TB PCR / MTB/Rif / GeneXpert (BF)|Body Fluid|N/A|MRL
 RT GS/CS|ETA|N/A|Microbiology
@@ -298,6 +362,12 @@ You MUST STRICTLY FOLLOW ALL RULES BELOW:
 - Test Name Format: Use specified shortcuts (e.g., Na, K, Crea, CBC, TB, DB, IB, BUA, Trop I, Vanco Trough) from the lookup table.
 - Test Name Renaming: You MUST use **'Phos' instead of 'PO4'** for all requests.
 - **Lipid Profile Grouping:** If the request includes all four tests (Triglycerides, Total cholesterol, LDL, and HDL), you MUST group them onto one form and set the requests_list field to: '**Lipid profile**'. Still include it along with other blood red top chemistry.
+- **Hepatitis Profile Grouping:**
+    - If 'Full Hepatitis Profile' is requested, output: 'HBsAg, Anti-HBs, Anti-HBc Total, HBeAg, Anti-HBe, Anti-HAV IgM, Anti-HCV, Anti-HBc IgM'.
+    - If 'Hepatitis B Profile' is requested, output: 'HBsAg, Anti-HBs, Anti-HBc Total, HBeAg, Anti-HBe, Anti-HBc IgM'.
+- **Infectious Disease Grouping:**
+    - If 'MMR panel' is requested, output: 'Measles, Mumps, Rubeola IgG'.
+    - If 'TORCH panel' is requested, output: 'Toxoplasma IgG, Toxoplasma IgM, Rubella IgG, Rubella IgM, CMV IgG, CMV IgM, HSV 1 IgG, HSV 2 IgG'.
 - Specimen Prefix Rule (Non-Blood): For all non-blood specimens (**including ETA, Pleural Fluid, Ascitic Fluid, and Pericardial Fluid**), prefix the test name with the Specimen Type (e.g., Stool DFS, Pleural Fluid TP).
 - **ETA Handling:** If the original text mentions 'Endotracheal Aspirate' or 'ETA', the Specimen Type MUST be output as **'ETA'** (not Sputum). All associated tests must use the 'ETA' prefix (e.g., ETA GS/CS).
 - Urinalysis and Fecalysis Exception: If any test from the Urinalysis Form is requested, the Lab Requests field for that line must contain only the word: Urinalysis. Do not include the "Urine" prefix. Similar with fecalysis, do not include the "Stool" prefix
@@ -352,7 +422,7 @@ export const DAY_ABBREVIATIONS: Record<number, string> = {
   1: 'M', 2: 'T', 3: 'W', 4: 'Th', 5: 'F', 6: 'Sa', 0: 'Su'
 };
 
-export const CUP_SPECIMENS = ['sputum', 'stool', 'urine', 'eta', 'pleural fluid', 'ascitic fluid', 'pericardial fluid'];
+export const CUP_SPECIMENS = ['sputum', 'stool', 'urine', 'eta', 'pleural fluid', 'ascitic fluid', 'pericardial fluid', 'corneal scraping', 'exudate', 'milk', 'environmental'];
 
 export interface LookupEntry {
   testName: string;

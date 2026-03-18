@@ -135,10 +135,44 @@ const TalongTab: React.FC = () => {
       if (!match) {
         // Sort lookup by name length descending to match longer specific names first
         const sortedLookup = [...lookup].sort((a, b) => b.testName.length - a.testName.length);
+        
+        // 1. Try prefix match (Test name starts with input) - e.g. "urinalysi" matches "Urinalysis"
         match = sortedLookup.find(entry => 
-          lowerLine.includes(entry.testName.toLowerCase()) ||
-          entry.testName.toLowerCase().includes(lowerLine)
+          entry.testName.toLowerCase().startsWith(lowerLine)
         );
+
+        // 2. Try contains match (only if test name > 3 chars to avoid 'Na' matching 'urinalysis')
+        if (!match) {
+          match = sortedLookup.find(entry => 
+            (entry.testName.length > 3 && lowerLine.includes(entry.testName.toLowerCase())) ||
+            (lowerLine.length > 3 && entry.testName.toLowerCase().includes(lowerLine))
+          );
+        }
+      }
+
+      // Try aliases
+      if (!match) {
+        const aliases: Record<string, string[]> = {
+          'na': ['sodium'], 'k': ['potassium'], 'cl': ['chloride'], 'ca': ['calcium'],
+          'mg': ['magnesium'], 'phos': ['phosphorus', 'po4'], 'fbs': ['sugar', 'glucose'],
+          'bua': ['uric acid'], 'crea': ['creatinine'], 'ua': ['urinalysis'],
+          'fecalysis': ['stool exam', 'stool analysis'], 'cbc': ['complete blood count'],
+          'tpag': ['albumin globulin'], 'trop i': ['troponin'], 'hba1c': ['glycated hemoglobin'],
+          'ogtt': ['glucose tolerance'], 'blood cs': ['bcs', 'blood culture & sensitivity'],
+          'coombs test': ['direct coombs', 'indirect coombs', 'coombs'],
+        };
+
+        const matchAlias = Object.entries(aliases).find(([key, vals]) => {
+          return vals.some(v => 
+            normalizedInput === v.replace(/[^a-z0-9]/g, '') ||
+            (normalizedInput.length > 3 && v.replace(/[^a-z0-9]/g, '').startsWith(normalizedInput))
+          );
+        });
+
+        if (matchAlias) {
+          const aliasKey = matchAlias[0];
+          match = lookup.find(entry => entry.testName.toLowerCase() === aliasKey);
+        }
       }
 
       if (match) return { ...match, originalInput: line };
@@ -285,13 +319,19 @@ const TalongTab: React.FC = () => {
         matDetails['SPECIMEN CUP'].tests.push(form.requests_list);
       }
 
-      if (requests.includes('BLOOD CS') || requests.includes('BLOOD C/S')) {
+      if (requests.includes('BLOOD CS') || requests.includes('BLOOD C/S') || requests.includes('BCS') || requests.includes('BLOOD CULTURE')) {
         bcsCount++;
+      }
+
+      if (requests.includes('ANAEROBIC CULTURE')) {
+        if (!matDetails['ANAEROBIC CULTURE BOTTLE']) matDetails['ANAEROBIC CULTURE BOTTLE'] = { count: 0, tests: [] };
+        matDetails['ANAEROBIC CULTURE BOTTLE'].count++;
+        matDetails['ANAEROBIC CULTURE BOTTLE'].tests.push('Anaerobic Culture');
       }
 
       // Reminders
       if (tube === 'BLUE') rems.add("BLUE TOP: Fill to the indicator line.");
-      if (requests.includes('VANCO TROUGH')) rems.add("For Vanco Trough, Cover red top with carbon paper prior to extraction.");
+      if (requests.includes('VANCO TROUGH')) rems.add("For Vanco Trough, Cover red top with carbon paper prior to extraction. Fill at least 3mL.");
       
       ['ICA', 'NH3', 'LACTATE'].forEach(test => {
         if (requests.includes(test) || (test === 'ICA' && tube === 'GREEN')) {
@@ -300,8 +340,9 @@ const TalongTab: React.FC = () => {
         }
       });
 
-      if (requests.includes('HBA1C')) rems.add("HbA1c: Fill to the line.");
-      if (requests.includes('ESR')) rems.add("ESR: Requires 2–4mL of blood and cannot use a microtainer.");
+      if (requests.includes('HBA1C')) rems.add("For HbA1c, fill to at least 2mL. Do not use a microtainer tube.");
+      if (requests.includes('CBC')) rems.add("For CBC, do not submit <1mL on a 4mL tube.");
+      if (requests.includes('ESR')) rems.add("ESR: Needs to be at least 2 mL.");
     });
 
     if (bcsCount > 0) {
@@ -363,6 +404,24 @@ const TalongTab: React.FC = () => {
   };
 
   const [mode, setMode] = useState<'needs' | 'generator'>('needs');
+  const [customBg, setCustomBg] = useState<string | null>(localStorage.getItem('pgh_custom_bg'));
+
+  useEffect(() => {
+    if (customBg) {
+      localStorage.setItem('pgh_custom_bg', customBg);
+    }
+  }, [customBg]);
+
+  const handleBgUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCustomBg(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handlePrint = () => {
     try {
@@ -449,7 +508,7 @@ const TalongTab: React.FC = () => {
                               let colorClass = `tube-color-${key.replace(/\s/g, '-').toUpperCase()}`;
                               
                               if (key.includes('SPECIAL BOTTLE')) {
-                                materialName = (count === 1 ? 'BCS BOTTLE' : 'BCS BOTTLES');
+                                materialName = (count === 1 ? 'BCS BOTTLE' : 'BCS BOTTLES') + ' (or 1 for pedia)';
                                 colorClass = 'tube-color-BROWN'; 
                               } else if (key.includes('4 SPECIAL TUBES')) {
                                 materialName = (count === 1 ? 'SPECIAL TUBE' : 'SPECIAL TUBES');
@@ -476,30 +535,19 @@ const TalongTab: React.FC = () => {
                                 <li key={key} className="flex flex-col py-1 border-b border-gray-100 last:border-0">
                                   <div className="flex items-center gap-2 group">
                                     <span 
-                                      className={`${colorClass} cursor-pointer hover:opacity-80 transition-all flex items-center justify-between w-full font-bold text-base md:text-lg`}
+                                      className={`${colorClass} flex items-center justify-between w-full font-bold text-base md:text-lg`}
                                       title={hoverTitle}
-                                      onClick={() => setExpandedMaterials(prev => ({ ...prev, [key]: !prev[key] }))}
                                     >
                                       <span>{count} {materialName}</span>
-                                      <svg 
-                                        className={`w-4 h-4 transition-transform ${expandedMaterials[key] ? 'rotate-180' : ''}`} 
-                                        fill="none" 
-                                        stroke="currentColor" 
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                      </svg>
                                     </span>
                                   </div>
-                                  {expandedMaterials[key] && (
-                                    <ul className="ml-4 mt-0 list-disc bg-transparent p-0">
-                                      {matDetail.tests.map((t, i) => (
-                                        <li key={i} className="text-[15px] text-gray-500 mb-0 ml-4 leading-none font-normal">
-                                          {t}
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  )}
+                                  <ul className="ml-4 mt-0 list-disc bg-transparent p-0">
+                                    {matDetail.tests.map((t, i) => (
+                                      <li key={i} className="text-[15px] text-gray-500 mb-0 ml-4 leading-none font-normal">
+                                        {t}
+                                      </li>
+                                    ))}
+                                  </ul>
                                 </li>
                               );
                             })}
@@ -824,7 +872,8 @@ Na,K,Cl'
                         'bua': ['uric acid'], 'crea': ['creatinine'], 'ua': ['urinalysis'],
                         'fecalysis': ['stool exam', 'stool analysis'], 'cbc': ['complete blood count'],
                         'tpag': ['albumin globulin'], 'trop i': ['troponin'], 'hba1c': ['glycated hemoglobin'],
-                        'ogtt': ['glucose tolerance'],
+                        'ogtt': ['glucose tolerance'], 'blood cs': ['bcs', 'blood culture & sensitivity'],
+                        'coombs test': ['direct coombs', 'indirect coombs', 'coombs'],
                       };
 
                       const matchAlias = Object.entries(aliases).some(([key, vals]) => {
@@ -882,11 +931,28 @@ Na,K,Cl'
             <p className="text-base mt-1.25 text-[#374151]">
               <strong>• Printing:</strong> Set scale to 88% and ensure paper size is A4.
             </p>
+            <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
+              <span className="text-sm font-bold text-[#334155]">Custom Form Background:</span>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={handleBgUpload}
+                className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#334155] file:text-white hover:file:bg-[#475569]"
+              />
+              {customBg && (
+                <button 
+                  onClick={() => setCustomBg(null)}
+                  className="text-xs text-red-500 hover:underline bg-transparent border-none shadow-none p-0"
+                >
+                  Reset to Default
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="form-previews flex flex-wrap gap-[15px] p-0 justify-start print-content">
             {forms.map((form, idx) => (
-              <LabForm key={idx} form={form} onUpdate={(updated) => updateForm(idx, updated)} />
+              <LabForm key={idx} form={form} onUpdate={(updated) => updateForm(idx, updated)} customBg={customBg} />
             ))}
           </div>
         </>

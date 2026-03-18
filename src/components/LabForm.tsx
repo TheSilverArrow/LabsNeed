@@ -5,9 +5,10 @@ import { RENDER_FIELDS, NUCMED_SCHEDULE, MRL_TB_TESTS, DAY_ABBREVIATIONS, CUP_SP
 interface LabFormProps {
   form: LabRequest;
   onUpdate: (updatedForm: LabRequest) => void;
+  customBg?: string | null;
 }
 
-const LabForm: React.FC<LabFormProps> = ({ form, onUpdate }) => {
+const LabForm: React.FC<LabFormProps> = ({ form, onUpdate, customBg }) => {
   const [fontSizes, setFontSizes] = useState<Record<string, number>>({});
   const [setter, setSetter] = useState<{ visible: boolean; x: number; y: number; field: string; baseSize: number } | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -59,7 +60,10 @@ const LabForm: React.FC<LabFormProps> = ({ form, onUpdate }) => {
 
   return (
     <div className="form-container" ref={formRef}>
-      <div className="form-preview lrf-coords">
+      <div 
+        className="form-preview lrf-coords"
+        style={customBg ? { backgroundImage: `url(${customBg})` } : {}}
+      >
         {RENDER_FIELDS.map((field, idx) => {
           if (!field.key) return null;
           

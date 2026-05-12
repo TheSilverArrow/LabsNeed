@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Map as MapIcon, Info, X, ChevronRight, ChevronLeft, Search, Edit2, Copy, Save, ZoomIn, ZoomOut, RotateCcw, Move, MapPin, Layers, Plus } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { AnimatedTabIcon } from './AnimatedTabIcon';
 
 interface Room {
   id: string;

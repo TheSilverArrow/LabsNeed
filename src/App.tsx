@@ -8,7 +8,6 @@ import TalongTab from './components/TalongTab';
 import PghMapTab from './components/PghMapTab';
 import PrintablesTab from './components/PrintablesTab';
 import { Menu, ChevronDown } from 'lucide-react';
-import { AnimatedTabIcon } from './components/AnimatedTabIcon';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState(localStorage.getItem('pgh_last_active_tab') || 'form-tool-content');
@@ -24,7 +23,7 @@ export default function App() {
   };
 
   const tabs = [
-    { id: 'form-tool-content', label: 'LAB NEEDS' },
+    { id: 'form-tool-content', label: 'LABS ASSISTANT' },
     { id: 'third-tool', label: 'PRINTABLES' },
     { id: 'second-tool', label: 'PGH MAP' },
   ];

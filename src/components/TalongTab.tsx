@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { LabRequest, MaterialDetail, Reminder } from '../types';
 import { extractLabData } from '../services/gemini';
 import LabForm from './LabForm';
-import { AnimatedTabIcon } from './AnimatedTabIcon';
 import { CUP_SPECIMENS, getParsedLookup, LookupEntry } from '../constants';
 
 const TalongTab: React.FC = () => {
@@ -610,7 +609,7 @@ const TalongTab: React.FC = () => {
     <div id="form-tool-content" className="w-full">
       <div className="input-section">
         <div id="title-logo-wrapper">
-          <h2 className="text-xl md:text-2xl">Lab Needs Assistant</h2>
+          <h2 className="text-xl md:text-2xl">Labs Assistant</h2>
         </div>
 
         {/* Giant Mode Switch */}

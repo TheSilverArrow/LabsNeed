@@ -3,6 +3,7 @@ import { LabRequest, MaterialDetail, Reminder } from '../types';
 import { extractLabData } from '../services/gemini';
 import LabForm from './LabForm';
 import { CUP_SPECIMENS, getParsedLookup, LookupEntry } from '../constants';
+import { AnimatedTabIcon } from './AnimatedTabIcon';
 
 const TalongTab: React.FC = () => {
   const [unstructured, setUnstructured] = useState('');
@@ -609,6 +610,7 @@ const TalongTab: React.FC = () => {
     <div id="form-tool-content" className="w-full">
       <div className="input-section">
         <div id="title-logo-wrapper">
+          <AnimatedTabIcon id="form-tool-content" isActive={true} size={30} />
           <h2 className="text-xl md:text-2xl">Labs Assistant</h2>
         </div>
 

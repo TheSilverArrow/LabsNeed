@@ -8,6 +8,7 @@ import TalongTab from './components/TalongTab';
 import PghMapTab from './components/PghMapTab';
 import PrintablesTab from './components/PrintablesTab';
 import { Menu, ChevronDown } from 'lucide-react';
+import { AnimatedTabIcon } from './components/AnimatedTabIcon';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState(localStorage.getItem('pgh_last_active_tab') || 'form-tool-content');
@@ -48,9 +49,10 @@ export default function App() {
           {tabs.map(tab => (
             <button 
               key={tab.id}
-              className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
+              className={`nav-tab flex items-center ${activeTab === tab.id ? 'active' : ''}`}
               onClick={() => handleTabChange(tab.id)}
             >
+              <AnimatedTabIcon id={tab.id} isActive={activeTab === tab.id} />
               {tab.label}
             </button>
           ))}
@@ -65,7 +67,7 @@ export default function App() {
             className="mobile-menu-btn w-full flex items-center justify-between bg-[#334155] text-white px-4 py-3 rounded-xl shadow-lg font-bold text-sm transition-all active:scale-95 border-none cursor-pointer"
           >
             <div className="flex items-center gap-2">
-              <Menu size={18} />
+              <AnimatedTabIcon id={activeTab} isActive={true} />
               <span>{activeTabLabel}</span>
             </div>
             <ChevronDown size={18} className={`transition-transform duration-300 ${isMenuOpen ? 'rotate-180' : ''}`} />
@@ -77,12 +79,13 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
-                  className={`w-full text-left px-5 py-4 text-sm font-bold transition-colors border-b border-gray-50 last:border-0 ${
+                  className={`w-full text-left px-5 py-4 text-sm font-bold transition-colors border-b border-gray-50 last:border-0 flex items-center gap-3 ${
                     activeTab === tab.id 
                       ? '!bg-[#334155] !text-white' 
                       : '!bg-white !text-[#334155] hover:bg-gray-50'
                   }`}
                 >
+                  <AnimatedTabIcon id={tab.id} isActive={activeTab === tab.id} />
                   {tab.label}
                 </button>
               ))}

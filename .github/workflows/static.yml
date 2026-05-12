@@ -41,6 +41,8 @@ jobs:
       - name: Build
         run: |
           npm run build
+          echo "Build finished. Content of dist directory:"
+          ls -R dist
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

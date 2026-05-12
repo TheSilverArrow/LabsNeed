@@ -28,6 +28,8 @@ jobs:
       name: github-pages
       url: ${{ steps:deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,6 +45,8 @@ jobs:
           npm run build
           echo "Build finished. Content of dist directory:"
           ls -R dist
+          echo "Checking index.html content:"
+          cat dist/index.html
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

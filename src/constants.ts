@@ -6,6 +6,7 @@ Ca|Blood|Red|Chemistry
 Mg|Blood|Red|Chemistry
 Phos|Blood|Red|Chemistry
 FBS|Blood|Red|Chemistry
+RBS|Blood|Red|Chemistry
 Triglycerides|Blood|Red|Chemistry
 Total cholesterol|Blood|Red|Chemistry
 LDL|Blood|Red|Chemistry
@@ -25,6 +26,7 @@ Amylase|Blood|Red|Chemistry
 Lipase|Blood|Red|Chemistry
 Albumin|Blood|Red|Chemistry
 BUA|Blood|Red|Chemistry
+Blood Uric Acid|Blood|Red|Chemistry
 Trop I|Blood|Red|Chemistry
 CK-Total|Blood|Red|Chemistry
 CK-MB|Blood|Red|Chemistry
@@ -52,9 +54,9 @@ AFP|Blood|Red|Immunopathology
 CA 19-9|Blood|Red|Immunopathology
 CEA|Blood|Red|Immunopathology
 HE 4|Blood|Red|Immunopathology
-TSH|Blood|Red|Immunopathology
-Free T3|Blood|Red|Immunopathology
-Free T4|Blood|Red|Immunopathology
+TSH (Thyroid Stimulating Hormone)|Blood|Red|Nuclear Medicine
+FT3 (Free Triiodothyronine)|Blood|Red|Nuclear Medicine
+FT4 (Free Thyroxine)|Blood|Red|Nuclear Medicine
 Dengue IgG|Blood|Red|Immunopathology
 Dengue IgM|Blood|Red|Immunopathology
 Dengue NS1 Ag|Blood|Red|Immunopathology
@@ -70,20 +72,18 @@ CA-125, diluted|Blood|Red|Immunopathology
 CA 15-3|Blood|Red|Immunopathology
 CA 19-9, Diluted|Blood|Red|Immunopathology
 CEA, Diluted|Blood|Red|Immunopathology
-DHEA-S|Blood|Red|Immunopathology
-Estradiol|Blood|Red|Immunopathology
-FSH|Blood|Red|Immunopathology
-Insulin|Blood|Red|Immunopathology
-LH|Blood|Red|Immunopathology
+DHEA-S|Blood|Red|Nuclear Medicine
+Estradiol|Blood|Red|Nuclear Medicine
+FSH|Blood|Red|Nuclear Medicine
+Insulin|Blood|Red|Nuclear Medicine
+LH|Blood|Red|Nuclear Medicine
 Total PSA|Blood|Red|Immunopathology
 Total PSA, Diluted|Blood|Red|Immunopathology
 Progesterone|Blood|Red|Immunopathology
-Prolactin|Blood|Red|Immunopathology
+Prolactin|Blood|Red|Nuclear Medicine
 RF|Blood|Red|Immunopathology
 SHBG|Blood|Red|Immunopathology
-Testosterone|Blood|Red|Immunopathology
-FT3|Blood|Red|Immunopathology
-FT4|Blood|Red|Immunopathology
+Testosterone|Blood|Red|Nuclear Medicine
 Anti-HAVIgM|Blood|Red|Immunopathology
 Anti-HBcIgM|Blood|Red|Immunopathology
 Anti-Streptococcal O (ASO)|Blood|Red|Immunopathology
@@ -116,7 +116,14 @@ Cortisol|Blood|Red|Nuclear Medicine
 25-Hydroxy Vit D|Blood|Red|Nuclear Medicine
 iPTH|Blood|Red|Nuclear Medicine
 Aldosterone|Blood|Red|Nuclear Medicine
-Anti-TPO|Blood|Red|Nuclear Medicine
+Anti-TPO (Anti-thyroid Peroxidase Antibody)|Blood|Red|Nuclear Medicine
+17-OHP (17a-Hydroxyprogesterone)|Blood|Red|Nuclear Medicine
+Antithyroglobulin Antibody|Blood|Red|Nuclear Medicine
+Thyroglobulin|Blood|Red|Nuclear Medicine
+TRAB (TSH Receptor Antibody)|Blood|Red|Nuclear Medicine
+hGH (Growth Hormone)|Blood|Red|Nuclear Medicine
+IGF-1 (Insulin-like Growth Factor 1)|Blood|Red|Nuclear Medicine
+C-Peptide|Blood|Red|Nuclear Medicine
 ANA|Blood|Red|MRL
 Anti-dsDNA|Blood|Red|MRL
 Anti-Smith (SM)|Blood|Red|MRL
@@ -165,11 +172,12 @@ G-6-PD|Blood|Purple|Chemistry
 HbA1c|Blood|Purple|Chemistry
 Tacrolimus|Blood|Purple|Immunopathology
 Blood Typing|Blood|Purple|Blood Bank
+BT|Blood|Purple|Blood Bank
 Cross-matching|Blood|Purple|Blood Bank
 Coombs Test|Blood|Purple|Blood Bank
 Coombs|Blood|Purple|Blood Bank
 Renin|Blood|Purple|Nuclear Medicine
-ACTH|Blood|Purple|Nuclear Medicine
+ACTH (Adrenocorticotropic Hormone)|Blood|Purple|Nuclear Medicine
 CD4|Blood|Purple|SAGIP
 Viral Load|Blood|Purple|SAGIP
 Resistance Test|Blood|Purple|SAGIP
@@ -178,7 +186,6 @@ BCS|Blood|Special Bottle|Microbiology
 Blood culture & sensitivity|Blood|Special Bottle|Microbiology
 Anaerobic Culture|Blood|Anaerobic Culture Bottle|Microbiology
 IGRA|Blood|4 Special Tubes|Immunopathology
-UA|Urine|N/A|Urinalysis
 Urinalysis|Urine|N/A|Urinalysis
 PT (urine)|Urine|N/A|Urinalysis
 UA Albumin|Urine|N/A|Urinalysis
@@ -190,6 +197,7 @@ UA Myoglobin|Urine|N/A|Urinalysis
 UA Nitrite|Urine|N/A|Urinalysis
 UA pH|Urine|N/A|Urinalysis
 UA RBC Morph|Urine|N/A|Urinalysis
+Urine RBC Morphology|Urine|N/A|Clinical Microscopy
 Urine Amylase|Urine|N/A|Chemistry
 Urine Ca|Urine|N/A|Chemistry
 Urine Cl|Urine|N/A|Chemistry
@@ -248,6 +256,7 @@ C. difficile PCR|Stool|N/A|Microbiology
 AFB (Sputum)|Sputum|N/A|Microbiology
 AFB CS / TB CS (Sputum)|Sputum|N/A|Microbiology
 TB PCR / MTB-RIF PCR (Sputum)|Sputum|N/A|MRL
+MTB-RIF (Sputum)|Sputum|N/A|MRL
 RT GS/CS|Sputum|N/A|Microbiology
 Fungal CS (Sputum)|Sputum|N/A|Microbiology
 Gram Stain (Sputum)|Sputum|N/A|Microbiology
@@ -310,25 +319,33 @@ Respiratory Tract GS/CS|Sputum|N/A|Microbiology
 Cytology (BF)|Body Fluid|N/A|Surgical Pathology
 TB PCR / MTB/Rif / GeneXpert (BF)|Body Fluid|N/A|MRL
 RT GS/CS|ETA|N/A|Microbiology
+ETA GS/CS|ETA|N/A|Microbiology
 AFB|ETA|N/A|Microbiology
+ETA AFB|ETA|N/A|Microbiology
 TB PCR / MTB-RIF PCR|ETA|N/A|MRL
-Biofire (BF)|Body Fluid|N/A|Special
-GeneXpert (BF)|Body Fluid|N/A|Special
-Biofire (Sputum)|Sputum|N/A|Special
-GeneXpert (Sputum)|Sputum|N/A|Special
-GeneXpert (Bone Marrow)|Bone Marrow|N/A|Special
-Biofire (Blood)|Blood|N/A|Special
-Biofire (CSF)|CSF|N/A|Special
-Biofire|Pleural Fluid|N/A|Special
-GeneXpert|Pleural Fluid|N/A|Special
-Biofire|Ascitic Fluid|N/A|Special
-GeneXpert|Ascitic Fluid|N/A|Special
-Biofire|Pericardial Fluid|N/A|Special
-GeneXpert|Pericardial Fluid|N/A|Special
-Biofire|ETA|N/A|Special
-GeneXpert|ETA|N/A|Special
+ETA MTB/Rif|ETA|N/A|MRL
+ETA GeneXpert|ETA|N/A|MRL
+Biofire|Body Fluid|N/A|Special
+GeneXpert|Body Fluid|N/A|Special
 ABG|Blood|Heparinized 1cc Syringe|ABG Lab
-VBG|Blood|Heparinized 1cc Syringe|ABG Lab`;
+VBG|Blood|Heparinized 1cc Syringe|ABG Lab
+Stool AFB|Stool|N/A|Microbiology
+TB Quantiferon|Blood|Green|MRL
+Lipid profile|Blood|Red|Chemistry
+Full Hepatitis Profile|Blood|Red|Serology
+Hepatitis B Profile|Blood|Red|Serology
+4PLEX Test|Swab|VTM|Molecular Lab
+SPEP|Blood|Red|Chemistry
+UPEP|Urine|N/A|Chemistry
+Serum Total Protein|Blood|Red|Chemistry
+Total Urine Protein|Urine|N/A|Chemistry
+PRBC|Blood|Purple|Blood Bank
+Platelet|Blood|Purple|Blood Bank
+FFP|Blood|Purple|Blood Bank
+Cryoprecipitate|Blood|Purple|Blood Bank
+Tissue Biopsy|Tissue|N/A|Surgical Pathology
+24h Urine|Urine|N/A|Chemistry
+Fluid Cytology|Body Fluid|N/A|Surgical Pathology`;
 
 export const SYSTEM_INSTRUCTION_TEMPLATE = `You are an expert medical data extractor. Your task is to analyze the following unstructured patient request text and convert it into a strictly structured JSON array format suitable for generating lab request forms.
 
@@ -340,10 +357,27 @@ You MUST STRICTLY FOLLOW ALL RULES BELOW:
 3. If multiple distinct lab requests are present (e.g., different Specimen Types or Tube Tops), generate a separate object (form) for each request.
 4. When reading the raw text, treat both **commas and line breaks** as separators between individual lab test requests.
 5. **PASSCODE IGNORE:** Completely ignore and do not include any patient passcode/PC number (usually a 6-character mix of letters and numbers, e.g., 'PC 1A2B3C') in the output.
+6. **CHECKBOX DETECTION:** Pay close attention to lines starting with '[]' or other markers. These often indicate requested tests. Ensure every test marked this way is included in the output.
+7. **GROUPED TEST SPLITTING:** You MUST recognize and split common grouped tests that may be sent without separators or as a single string:
+    - 'TB DB IB' or 'TBDBIB' -> 'TB, DB, IB'
+    - 'BUA Uric Acid' -> 'BUA'
+    - 'C3 dsDNA' -> 'C3, Anti-dsDNA'
+    - 'Urine Crea TP' -> 'Urine Crea, Urine TP'
+    - 'HBsAg Anti-HCV' -> 'HBsAg, Anti-HCV'
+    - 'Na K Cl' or 'NaKCl' -> 'Na, K, Cl'
+    - 'BUN Crea' -> 'BUN, Crea'
+    - 'AST ALT' -> 'AST, ALT'
+    - 'hGH IGF-1' -> 'hGH, IGF-1'
+    - 'Insulin C-Peptide' -> 'Insulin, C-Peptide'
+    - 'FSH LH' -> 'FSH, LH'
+    - 'ETA GSCS' -> 'ETA GS/CS'
+    - 'ETA AFB MTBRif' -> 'ETA AFB, ETA MTB/Rif'
+    - 'Hepatitis tests' (e.g., 'HBsAg Anti-HBs') -> split into individual tests.
+    - 'BCS x2' or 'Blood CS x 2' -> DO NOT SPLIT. Keep as 'BCS x2' or 'Blood CS x 2'.
 
 -- Field Order & Default Rules --
 - Patient Name: Use the full first and last name, but only the initial for the middle name (e.g., CABADING, LETICIA P.). Must be in ALL CAPS.
-- Age/Sex: Use the format [Age Number]/[M or F] (e.g., 54/F).
+- Age/Sex: Use the format [Age Number]/[M or F] (e.g., 54/F). ALWAYS try to extract both. If only age is present, provide age. If only sex is present, provide sex. Use a slash "/" as a separator if both are present (e.g. "25/M"). If you find "25M", return "25/M". If you find "Male, 30", return "30/M".
 - Collected By: Must be set to the default value: "__COLLECTOR_DEFAULT__".
 - Date Collected: Must be set to today's date: "__DATE_DEFAULT__".
 - Time Collected: Only extract if explicitly specified in the RAW TEXT, otherwise use an empty string("").
@@ -353,74 +387,63 @@ You MUST STRICTLY FOLLOW ALL RULES BELOW:
 - NON-BLOOD Specimens (General Rule): Each individual test must be listed on a SEPARATE output object/form, even if they share the same Specimen Type and Form Type.
 - Sputum/ETA/Body Fluid Culture Grouping Exception:
     - **Custom Grouping for Sputum/ETA/Body Fluid Culture:** Group **only** the requested tests from GS/CS, AFB, and MTBRif (or their equivalents) onto a single form, provided they share the **same Specimen Type** (e.g., all Sputum, all ETA). Set the Form Type to: Microbiology/MRL. The requests_list MUST be output as a comma-separated list of ONLY the tests requested (e.g., 'Sputum GS/CS, AFB'). Do **NOT** group if the tests are for different specimens.
-- **SPECIAL EXCEPTION: Biofire / GeneXpert:** The following tests MUST each be placed on a **SEPARATE** form, regardless of specimen type or other requests, and the Form Type MUST be set to **'Special'**:
+- **SPECIAL EXCEPTION: Biofire / GeneXpert / 4PLEX:** The following tests MUST each be placed on a **SEPARATE** form, regardless of specimen type or other requests, and the Form Type MUST be set to **'Special'**:
     - **Biofire** (any type, e.g., Body Fluid Biofire)
     - **GeneXpert** (any type, e.g., MTB GeneXpert, TB GeneXpert)
+    - **4PLEX Test** (SARS-CoV-2, influenza A/B, RSV)
 - Urine Chemistry Exception: All Urine Chemistry tests must be grouped onto a single output object under the Chemistry Form Type.
 
 -- Lab Requests (Test Name) Rules --
-- Test Name Format: Use specified shortcuts (e.g., Na, K, Crea, CBC, TB, DB, IB, BUA, Trop I, Vanco Trough) from the lookup table.
+- Test Name Format: Use specified shortcuts (e.g., Na, K, Crea, CBC, TB, DB, IB, BUA, Trop I, Vanco Trough, HbA1c, TSH, UA) from the lookup table.
+- **TB, DB, IB are BLOOD tests:** NEVER prefix TB, DB, or IB with 'Urine'. If the text says 'TB DB IB', these are Blood Chemistry tests. If the request is for urine bilirubin, it will be part of 'Urinalysis'.
+- **BUA / Uric Acid:** 'BUA', 'Blood Uric Acid', and 'Uric Acid' (when not prefixed by Urine) all refer to the same Blood Chemistry test: **BUA**. NEVER prefix 'Uric Acid' with 'Urine' unless it explicitly says 'Urine Uric Acid'.
 - Test Name Renaming: You MUST use **'Phos' instead of 'PO4'** for all requests.
-- **Lipid Profile Grouping:** If the request includes all four tests (Triglycerides, Total cholesterol, LDL, and HDL), you MUST group them onto one form and set the requests_list field to: '**Lipid profile**'. Still include it along with other blood red top chemistry.
+- **Vitamin D:** 'Vit D', 'Vitd', and 'Vitamin D' all refer to '25-Hydroxy Vit D'.
+- **PTH:** 'PTH' and 'iPTH' refer to 'iPTH'.
+- **HCG:** 'HCG' and 'BHCG' refer to 'BHCG'.
+- **17-OHP:** '17a-Hydroxyprogesterone' and '17-OHP' refer to '17-OHP (17a-Hydroxyprogesterone)'.
+- **TPO:** 'Anti-thyroid Peroxidase Antibody', 'Anti-TPO', and 'TPO' refer to 'Anti-TPO (Anti-thyroid Peroxidase Antibody)'.
+- **TRAB:** 'TSH Receptor Antibody' and 'TRAB' refer to 'TRAB (TSH Receptor Antibody)'.
+- **hGH:** 'Growth Hormone' and 'hGH' refer to 'hGH (Growth Hormone)'.
+- **IGF-1:** 'Insulin-like Growth Factor 1' and 'IGF-1' refer to 'IGF-1 (Insulin-like Growth Factor 1)'.
+- **FT4:** 'Free Thyroxine' and 'FT4' refer to 'FT4 (Free Thyroxine)'.
+- **TSH:** 'Thyroid Stimulating Hormone' and 'TSH' refer to 'TSH (Thyroid Stimulating Hormone)'.
+- **FT3:** 'Free Triiodothyronine' and 'FT3' refer to 'FT3 (Free Triiodothyronine)'.
+- **ACTH:** 'Adrenocorticotropic Hormone' and 'ACTH' refer to 'ACTH (Adrenocorticotropic Hormone)'.
+- **DHEAS:** 'Dehydroepiandrosterone' and 'DHEAS' refer to 'DHEA-S'.
+- **FSH:** 'Follicle-stimulating Hormone' and 'FSH' refer to 'FSH'.
+- **LH:** 'Luteinizing Hormone' and 'LH' refer to 'LH'.
+- **Ammonia:** 'Ammonia' and 'NH3' refer to the same test.
+- **MRL Tests at Central Labs:**
+    - **Stool AFB** and **TB Quantiferon** are available at Central Labs.
+    - **Schedule:** Only available Monday to Thursday, 8:00 AM - 3:00 PM.
+    - **TB Quantiferon Material:** Requires Green Top tubes (2 for adults, 1-2 for pediatrics).
+- **MRL & GeneXpert Schedule:**
+    - **MRL General:** 8:00 AM - 3:00 PM, Monday to Friday.
+    - **GeneXpert (MRL):** 8:00 AM - 3:00 PM, Monday to Friday. Limit 25 patients per day.
+    - **GeneXpert (TB-DOTS):** Only available Monday and Friday, 8:00 AM - 3:00 PM.
+- **Green Top Tests (Heparin):**
+    - **iCa, Lactate, and Ammonia (NH3)**: These tests require ice and special handling.
+    - **Plasma K**: Does NOT require ice.
+- **Space-Delineated Tests:** If multiple tests are listed in a single line separated by spaces (e.g., 'BUN Crea Na K'), you MUST identify and extract them as individual tests (e.g., 'BUN, Crea, Na, K'). Be careful not to split multi-word tests like 'Plasma K', 'Urine Na', 'Urine TP', etc.
+- **Comprehensive Extraction:** You MUST extract ALL requested tests mentioned in the text. Do not skip any, even if they seem redundant or are listed multiple times. If a test like 'HbA1c' or 'TSH' is listed, it MUST be in the output.
+- **Lipid Profile Grouping:** If the request includes 'Lipid profile' or all four tests (Triglycerides, Total cholesterol, LDL, and HDL), you MUST group them onto one form and set the requests_list field to: '**Lipid profile (Triglycerides, Total cholesterol, LDL, HDL)**'. Still include it along with other blood red top chemistry.
 - **Hepatitis Profile Grouping:**
-    - If 'Full Hepatitis Profile' is requested, output: 'HBsAg, Anti-HBs, Anti-HBc Total, HBeAg, Anti-HBe, Anti-HAV IgM, Anti-HCV, Anti-HBc IgM'.
-    - If 'Hepatitis B Profile' is requested, output: 'HBsAg, Anti-HBs, Anti-HBc Total, HBeAg, Anti-HBe, Anti-HBc IgM'.
+    - If 'Full Hepatitis Profile' is requested, you MUST group the following tests onto one form and set the requests_list field to: '**Full Hepatitis Profile (HBsAg, Anti-HBs, Anti-HBc Total, HBeAg, Anti-HBe, Anti-HAV IgM, Anti-HCV, Anti-HBc IgM)**'.
+    - If 'Hepatitis B Profile' is requested, you MUST group the following tests onto one form and set the requests_list field to: '**Hepatitis B Profile (HBsAg, Anti-HBs, Anti-HBc Total, HBeAg, Anti-HBe, Anti-HBc IgM)**'.
 - **Infectious Disease Grouping:**
     - If 'MMR panel' is requested, output: 'Measles, Mumps, Rubeola IgG'.
     - If 'TORCH panel' is requested, output: 'Toxoplasma IgG, Toxoplasma IgM, Rubella IgG, Rubella IgM, CMV IgG, CMV IgM, HSV 1 IgG, HSV 2 IgG'.
+- **SPEP/UPEP Rule:**
+    - If 'SPEP' is requested, you MUST also include 'Serum Total Protein' on the same form.
+    - If 'UPEP' is requested, you MUST also include 'Total Urine Protein' on the same form.
 - Specimen Prefix Rule (Non-Blood): For all non-blood specimens (**including ETA, Pleural Fluid, Ascitic Fluid, and Pericardial Fluid**), prefix the test name with the Specimen Type (e.g., Stool DFS, Pleural Fluid TP).
 - **ETA Handling:** If the original text mentions 'Endotracheal Aspirate' or 'ETA', the Specimen Type MUST be output as **'ETA'** (not Sputum). All associated tests must use the 'ETA' prefix (e.g., ETA GS/CS).
 - Urinalysis and Fecalysis Exception: If any test from the Urinalysis Form is requested, the Lab Requests field for that line must contain only the word: Urinalysis. Do not include the "Urine" prefix. Similar with fecalysis, do not include the "Stool" prefix
-- Urine Chemistry Prefix: All other Urine tests (e.g., Chemistry, Microbiology) must use the Urine prefix (e.g., Urine Na, Urine Crea, Urine GS/CS).
+- Urine Prefix Rule: All other Urine tests (e.g., Chemistry, Microbiology, Clinical Microscopy) must use the Urine prefix (e.g., Urine Na, Urine Crea, Urine GS/CS, Urine RBC Morphology).
 
 -- LAB TEST LOOKUP TABLE (Table Basis) --
 ${LAB_TEST_LOOKUP}`;
-
-export const NUCMED_SCHEDULE = {
-  "FREE T4": { schedule: "Everyday" },
-  "TSH": { schedule: "Everyday" },
-  "FREE T3": { schedule: "M,W,F", note: "Fasting for 8-12 hrs" },
-  "CORTISOL": { schedule: "M,W,F", note: "Fasting for 8-12 hrs" },
-  "PROLACTIN": { schedule: "M,W,F" },
-  "VIT D": { schedule: "M,W" },
-  "IPTH": { schedule: "M,W" },
-  "HCG": { schedule: "M,Th" },
-  "17A-HYDROXYPROGESTERONE": { schedule: "M,Th" },
-  "ANTI-THYROGLOBULIN ANTIBODY": { schedule: "T,Th" },
-  "ANTI-TPO": { schedule: "T,Th" },
-  "TESTOSTERONE": { schedule: "T,Th" },
-  "THYROGLOBULIN": { schedule: "T,Th" },
-  "DHEAS": { schedule: "Mondays only" },
-  "TRAB": { schedule: "Last Monday of the Month" },
-  "HGH": { schedule: "Tuesdays only", note: "Fasting for 8-12 hours" },
-  "IGF-1": { schedule: "Tuesdays only" },
-  "INSULIN": { schedule: "Wednesdays only", note: "Fasting for 8-12 hours" },
-  "C-PEPTIDE": { schedule: "Wednesdays only", note: "Fasting for 8-12 hours" },
-  "FSH": { schedule: "Wednesdays only" },
-  "LUTEINIZING HORMONE": { schedule: "Wednesdays only" },
-  "ALDOSTERONE": { schedule: "Fridays only" },
-  "RENIN": { schedule: "Fridays only", note: "Fasting for 8-12 hours" },
-  "ESTRADIOL": { schedule: "Fridays only" },
-  "ACTH": { schedule: "Fridays only", note: "Fasting for 8-12 hours" }
-};
-
-export const MRL_TB_TESTS = {
-  "TB PCR": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "MTB/RIF": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "TB GENEXPERT": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "HSV PCR": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "TB PCR (CSF)": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "MTB/RIF (CSF)": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "TB GENEXPERT (CSF)": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "HSV PCR (CSF)": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "TB PCR (BM)": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "TB PCR / MTB-RIF PCR (SPUTUM)": { schedule: "M,F", note: "Requires TB-DOTS Referral" },
-  "TB PCR / MTB/RIF / GENEXPERT (BF)": { schedule: "M,F", note: "Requires TB-DOTS Referral" }
-};
-
-export const DAY_ABBREVIATIONS: Record<number, string> = {
-  1: 'M', 2: 'T', 3: 'W', 4: 'Th', 5: 'F', 6: 'Sa', 0: 'Su'
-};
 
 export const CUP_SPECIMENS = ['sputum', 'stool', 'urine', 'eta', 'pleural fluid', 'ascitic fluid', 'pericardial fluid', 'corneal scraping', 'exudate', 'milk', 'environmental'];
 
@@ -433,10 +456,12 @@ export interface LookupEntry {
 
 export const getParsedLookup = (): LookupEntry[] => {
   const lines = LAB_TEST_LOOKUP.split('\n').slice(1); // Skip header
-  return lines.map(line => {
-    const [testName, specimen, top, formType] = line.split('|');
-    return { testName, specimen, top, formType };
-  });
+  return lines
+    .filter(line => line.trim() !== '')
+    .map(line => {
+      const [testName, specimen, top, formType] = line.split('|');
+      return { testName, specimen, top, formType };
+    });
 };
 
 export const RENDER_FIELDS = [

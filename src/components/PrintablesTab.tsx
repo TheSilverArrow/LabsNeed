@@ -1,26 +1,36 @@
 import React, { useState } from 'react';
-import { ClipboardList } from 'lucide-react';
+import { AnimatedTabIcon } from './AnimatedTabIcon';
+import { ClipboardList, X, Printer, Maximize2 } from 'lucide-react';
 
-const PrintablesTab: React.FC = () => {
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+interface PrintablesTabProps {
+  onModalToggle?: (isOpen: boolean) => void;
+}
+
+const PrintablesTab: React.FC<PrintablesTabProps> = ({ onModalToggle }) => {
+  const [selectedFile, setSelectedFile] = useState<{ label: string; file: string } | null>(null);
 
   const forms = [
-    { id: 'lrf', label: 'Laboratory Request Form (4s for A4)', file: '/lrf.pdf' },
-    { id: 'slrf', label: 'Laboratory Request Form (1s for A6)', file: '/slrf.pdf' },
-    { id: 'ef', label: 'Equilife Form', file: '/ef.pdf' },
-    { id: 'rivf', label: 'RIV Form', file: '/rivf.pdf' },
+    { id: 'lrf', label: 'Laboratory Request Form (4s for A4)', file: `${import.meta.env.BASE_URL}lrf.pdf` },
+    { id: 'slrf', label: 'Laboratory Request Form (1s for A6)', file: `${import.meta.env.BASE_URL}slrf.pdf` },
+    { id: 'ef', label: 'Equilife Form', file: `${import.meta.env.BASE_URL}ef.pdf` },
+    { id: 'efn', label: 'Equilife Forms (NEW)', file: `${import.meta.env.BASE_URL}ef1.pdf` },
+    { id: 'spf', label: 'SurgPath Form', file: `${import.meta.env.BASE_URL}sp.pdf` },
+    { id: 'rivf', label: 'RIV Form', file: `${import.meta.env.BASE_URL}rivf.pdf` },
   ];
+
+  const handleSelectFile = (form: { label: string; file: string } | null) => {
+    setSelectedFile(form);
+    if (onModalToggle) {
+      onModalToggle(!!form);
+    }
+  };
 
   return (
     <div id="third-tool" className="tool-content active">
       <div className="input-section">
         <div id="title-logo-wrapper">
-          <ClipboardList className="w-10 h-10 mr-3 text-[#334155]" />
+          <AnimatedTabIcon id="third-tool" isActive={true} size={32} />
           <h2>Printables Repository</h2>
-        </div>
-
-        <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
-          <strong>Note:</strong> Please ensure the PDF files (e.g., <code>lrf.pdf</code>, <code>charge_slip.pdf</code>) are uploaded to the <code>public/</code> folder to enable previews and downloads.
         </div>
 
         <div className="input-column">
@@ -35,26 +45,70 @@ const PrintablesTab: React.FC = () => {
 
           <div className="flex gap-[15px] flex-wrap mb-[30px]">
             {forms.map(form => (
-              <button key={form.id} onClick={() => setSelectedFile(form.file)}>
+              <button 
+                key={form.id} 
+                onClick={() => handleSelectFile(form)}
+              >
                 {form.label}
               </button>
             ))}
           </div>
         </div>
 
+        {/* PDF Modal Popup */}
         {selectedFile && (
-          <div className="w-full mt-5">
-            <button 
-              className="fixed right-[3vw] bg-[#334155] mt-[50px] pt-1.5 text-[10pt] h-[30px] w-[300px]"
-              onClick={() => window.print()}
-            >
-              Use browser print dialog (Ctrl+P/Share-&gt;Print) to print
-            </button>
-            <iframe 
-              src={selectedFile} 
-              className="w-full h-[50vh] border-none"
-              title="Printable Preview"
-            />
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white w-full h-full max-w-6xl max-h-screen md:max-h-[95vh] md:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <ClipboardList className="w-5 h-5 text-blue-600" />
+                  <h3 className="font-bold text-gray-800">{selectedFile.label}</h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={selectedFile.file}
+                    download
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm border-none cursor-pointer no-underline"
+                  >
+                    <Printer className="w-4 h-4" />
+                    Download to Print
+                  </a>
+                  <button
+                    onClick={() => handleSelectFile(null)}
+                    className="p-2 hover:bg-gray-200 rounded-lg transition-colors text-gray-500 border-none bg-transparent cursor-pointer"
+                    title="Close"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Content - PDF Viewer */}
+              <div className="flex-1 bg-gray-100 relative flex flex-col">
+                <div className="bg-blue-50 px-4 py-2 border-b border-blue-100 flex items-center justify-between">
+                  <p className="text-[11px] md:text-xs text-blue-700 flex items-center gap-2">
+                    <Maximize2 className="w-3 h-3" />
+                    <strong>Tip:</strong> If this is a fillable form, type directly into the boxes. Use the <strong>print icon INSIDE the PDF toolbar</strong> (top right of the PDF) to ensure your text is included.
+                  </p>
+                  <a 
+                    href={selectedFile.file} 
+                    download 
+                    className="text-[11px] md:text-xs text-blue-600 font-bold hover:underline"
+                  >
+                    Download PDF
+                  </a>
+                </div>
+                <div className="flex-1">
+                  <iframe
+                    id="pdf-viewer"
+                    src={`${selectedFile.file}#toolbar=1&view=FitH`}
+                    className="w-full h-full border-none"
+                    title="Printable Preview"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

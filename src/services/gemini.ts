@@ -10,7 +10,7 @@ export const JSON_SCHEMA = {
     properties: {
       "name": { type: Type.STRING, description: "Patient's full name (LAST, FIRST MI). Must be in all caps." },
       "ward_location": { type: Type.STRING, description: "Ward location (e.g., ICU 3, Room 102)." },
-      "age_sex": { type: Type.STRING, description: "Patient's age and sex, combined (e.g., '45/F' or '72/M')." },
+      "age_sex": { type: Type.STRING, description: "Patient's age and sex (e.g., '45/F' or '72/M'). ALWAYS try to extract both. If only age is present, provide age. If only sex is present, provide sex. Use a slash '/' as a separator if both are present (e.g. '25/M')." },
       "birthday": { type: Type.STRING, description: "Patient's date of birth (MM-DD-YYYY)." },
       "case_number": { type: Type.STRING, description: "Patient's unique case or chart number." },
       "diagnosis": { type: Type.STRING, description: "Primary provisional or admitting diagnosis. Should be brief." },
@@ -22,7 +22,7 @@ export const JSON_SCHEMA = {
       "site_of_collection": { type: Type.STRING, description: "Anatomical or procedural site (e.g., Venipuncture, Mid-Stream, Thoracentesis)." },
       "form_type": { type: Type.STRING, description: "The specific laboratory section/test category this request belongs to (e.g., Hematology, Chemistry, Urinalysis, Culture, Special)." },
       "tube_top": { type: Type.STRING, description: "Color of the tube top required for this test. Use 'N/A' for non-tube specimens (like Urine, Sputum, etc.). (e.g., Purple, Red, Blue, N/A)." },
-      "requests_list": { type: Type.STRING, description: "A comma-separated list of the specific tests requested on this form (e.g., 'CBC, Platelet Count')." }
+      "requests_list": { type: Type.STRING, description: "A comma-separated list of the specific tests requested on this form (e.g., 'CBC, Platelet Count'). IMPORTANT: If the request includes 'Lipid profile' or all four tests (Triglycerides, Total cholesterol, LDL, and HDL), you MUST group them onto one form and set the requests_list field to: 'Lipid profile'." }
     },
     required: ["name", "age_sex", "case_number", "date_collected", "specimen_type", "form_type", "requests_list"]
   }

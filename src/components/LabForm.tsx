@@ -1,34 +1,56 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LabRequest, MaterialDetail, Reminder } from '../types';
-import { RENDER_FIELDS, NUCMED_SCHEDULE, MRL_TB_TESTS, DAY_ABBREVIATIONS, CUP_SPECIMENS } from '../constants';
+import { RENDER_FIELDS } from '../constants';
 
 interface LabFormProps {
   form: LabRequest;
   onUpdate: (updatedForm: LabRequest) => void;
-  customBg?: string | null;
 }
 
-const LabForm: React.FC<LabFormProps> = ({ form, onUpdate, customBg }) => {
+const LabForm: React.FC<LabFormProps> = ({ form, onUpdate }) => {
   const [fontSizes, setFontSizes] = useState<Record<string, number>>({});
   const [setter, setSetter] = useState<{ visible: boolean; x: number; y: number; field: string; baseSize: number } | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
   const cleanAgeSex = (ageSexString: string) => {
     if (!ageSexString) return { age: '', sex: '' };
-    let cleaned = ageSexString.toLowerCase().replace(/years old/g, '').trim();
+    // Remove "years old" and other common suffixes
+    let cleaned = ageSexString.toLowerCase().replace(/years old|yo|y\/o|yrs|yr/g, '').trim();
+
+    // Try to find a separator first
+    let age = '';
+    let sex = '';
 
     if (cleaned.includes('/')) {
       let parts = cleaned.split('/');
-      return { age: parts[0].trim(), sex: parts[1].trim().toUpperCase() };
+      age = parts[0].trim();
+      sex = parts[1].trim().toUpperCase();
     } else if (cleaned.includes(',')) {
       let parts = cleaned.split(',');
-      return { age: parts[0].trim(), sex: parts[1].trim().toUpperCase() };
+      age = parts[0].trim();
+      sex = parts[1].trim().toUpperCase();
     } else {
-      let parts = cleaned.split(' ');
-      let sex = parts.pop()?.toUpperCase() || '';
-      let age = parts.join(' ');
-      return { age: age.trim(), sex: sex };
+      // No standard separator, try to split by the last character if it's M or F
+      const lastChar = cleaned.slice(-1).toUpperCase();
+      if (lastChar === 'M' || lastChar === 'F') {
+        sex = lastChar;
+        age = cleaned.slice(0, -1).trim();
+      } else {
+        // Fallback to space split
+        let parts = cleaned.split(' ');
+        sex = parts.pop()?.toUpperCase() || '';
+        age = parts.join(' ').trim();
+      }
     }
+
+    // Final cleanup: ensure sex is just M or F
+    if (sex.includes('MALE')) sex = 'M';
+    if (sex.includes('FEMALE')) sex = 'F';
+    if (sex.length > 1 && (sex.startsWith('M') || sex.startsWith('F'))) {
+      sex = sex.charAt(0);
+    }
+
+    return { age, sex };
   };
 
   const ageSexData = cleanAgeSex(form.age_sex);
@@ -62,20 +84,23 @@ const LabForm: React.FC<LabFormProps> = ({ form, onUpdate, customBg }) => {
     <div className="form-container" ref={formRef}>
       <div 
         className="form-preview lrf-coords"
-        style={customBg ? { backgroundImage: `url(${customBg})` } : {}}
+        style={{ backgroundImage: `url(${import.meta.env.BASE_URL}single_lrf.png)` }}
       >
         {RENDER_FIELDS.map((field, idx) => {
           if (!field.key) return null;
           
           const value = field.key === 'name' ? (form.name || '').toUpperCase() : (form as any)[field.key] || '';
           const baseSize = fontSizes[field.class] || field.defaultFontSize || 16;
+          // Convert px to cqw (container query width) for responsiveness
+          // 16px at 415px width is ~3.85cqw
+          const cqwSize = (baseSize / 415) * 100;
           
           if (field.element === 'textarea') {
             return (
               <textarea
                 key={idx}
                 className={`overlay-field ${field.class}`}
-                style={{ fontSize: `${baseSize}px` }}
+                style={{ fontSize: `${cqwSize}cqw` }}
                 value={value}
                 onChange={(e) => onUpdate({ ...form, [field.key!]: e.target.value })}
                 onDoubleClick={(e) => handleDoubleClick(e, field.class, field.defaultFontSize || 16)}
@@ -88,7 +113,7 @@ const LabForm: React.FC<LabFormProps> = ({ form, onUpdate, customBg }) => {
               key={idx}
               type="text"
               className={`overlay-field ${field.class}`}
-              style={{ fontSize: `${baseSize}px` }}
+              style={{ fontSize: `${cqwSize}cqw` }}
               value={value}
               onChange={(e) => onUpdate({ ...form, [field.key!]: e.target.value })}
               onDoubleClick={(e) => handleDoubleClick(e, field.class, field.defaultFontSize || 16)}
@@ -101,7 +126,7 @@ const LabForm: React.FC<LabFormProps> = ({ form, onUpdate, customBg }) => {
         <input
           type="text"
           className="overlay-field age-sex-age"
-          style={{ fontSize: `${fontSizes['age-sex-age'] || 16}px` }}
+          style={{ fontSize: `${((fontSizes['age-sex-age'] || 16) / 415) * 100}cqw` }}
           value={ageSexData.age}
           onChange={(e) => onUpdate({ ...form, age_sex: `${e.target.value}/${ageSexData.sex}` })}
           onDoubleClick={(e) => handleDoubleClick(e, 'age-sex-age', 16)}
@@ -110,7 +135,7 @@ const LabForm: React.FC<LabFormProps> = ({ form, onUpdate, customBg }) => {
         <input
           type="text"
           className="overlay-field age-sex-sex"
-          style={{ fontSize: `${fontSizes['age-sex-sex'] || 16}px` }}
+          style={{ fontSize: `${((fontSizes['age-sex-sex'] || 16) / 415) * 100}cqw` }}
           value={ageSexData.sex}
           onChange={(e) => onUpdate({ ...form, age_sex: `${ageSexData.age}/${e.target.value}` })}
           onDoubleClick={(e) => handleDoubleClick(e, 'age-sex-sex', 16)}
@@ -118,7 +143,7 @@ const LabForm: React.FC<LabFormProps> = ({ form, onUpdate, customBg }) => {
         />
         <textarea
           className="overlay-field requests-field"
-          style={{ fontSize: `${fontSizes['requests-field'] || 16}px` }}
+          style={{ fontSize: `${((fontSizes['requests-field'] || 16) / 415) * 100}cqw` }}
           value={form.requests_list}
           onChange={(e) => onUpdate({ ...form, requests_list: e.target.value })}
           onDoubleClick={(e) => handleDoubleClick(e, 'requests-field', 16)}

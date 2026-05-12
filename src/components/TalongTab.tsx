@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { LabRequest, MaterialDetail, Reminder } from '../types';
 import { extractLabData } from '../services/gemini';
 import LabForm from './LabForm';
-import { CUP_SPECIMENS, NUCMED_SCHEDULE, MRL_TB_TESTS, DAY_ABBREVIATIONS, getParsedLookup, LookupEntry } from '../constants';
-import { ClipboardList } from 'lucide-react';
+import { AnimatedTabIcon } from './AnimatedTabIcon';
+import { CUP_SPECIMENS, getParsedLookup, LookupEntry } from '../constants';
 
 const TalongTab: React.FC = () => {
   const [unstructured, setUnstructured] = useState('');
@@ -23,7 +23,6 @@ const TalongTab: React.FC = () => {
   const [showFullGenerator, setShowFullGenerator] = useState(false);
   const [loading, setLoading] = useState(false);
   const [materials, setMaterials] = useState<Record<string, MaterialDetail>>({});
-  const [expandedMaterials, setExpandedMaterials] = useState<Record<string, boolean>>({});
   const [reminders, setReminders] = useState<Reminder[]>([]);
 
   useEffect(() => {
@@ -52,14 +51,35 @@ const TalongTab: React.FC = () => {
         setManualBirthday(first.birthday || '');
         
         const ageSex = first.age_sex || '';
-        const ageMatch = ageSex.match(/(\d+)/);
-        const sexMatch = ageSex.match(/(M|F)/i);
-        setManualAge(ageMatch ? ageMatch[1] : '');
-        setManualSex(sexMatch ? sexMatch[1].toUpperCase() : '');
+        // Use a more robust extraction for age and sex
+        let extractedAge = '';
+        let extractedSex = '';
+        
+        const cleanedAgeSex = ageSex.toLowerCase().replace(/years old|yo|y\/o|yrs|yr/g, '').trim();
+        if (cleanedAgeSex.includes('/')) {
+          const parts = cleanedAgeSex.split('/');
+          extractedAge = parts[0].trim();
+          extractedSex = parts[1].trim().toUpperCase();
+        } else if (cleanedAgeSex.includes(',')) {
+          const parts = cleanedAgeSex.split(',');
+          extractedAge = parts[0].trim();
+          extractedSex = parts[1].trim().toUpperCase();
+        } else {
+          const ageMatch = cleanedAgeSex.match(/(\d+)/);
+          const sexMatch = cleanedAgeSex.match(/(M|F)/i);
+          extractedAge = ageMatch ? ageMatch[1] : '';
+          extractedSex = sexMatch ? sexMatch[1].toUpperCase() : '';
+        }
+        
+        setManualAge(extractedAge);
+        setManualSex(extractedSex);
         
         setManualCN(first.case_number || '');
         setManualLocation(first.ward_location || '');
-        setManualLabs(first.requests_list || '');
+        
+        // Combine all requests_list from all forms into one string for the manualLabs box
+        const allLabs = data.map(item => item.requests_list).filter(Boolean).join('\n');
+        setManualLabs(allLabs);
 
         const newForms: LabRequest[] = data.map(item => {
           const form: LabRequest = {
@@ -100,12 +120,80 @@ const TalongTab: React.FC = () => {
     const rawLines = manualLabs.split(/[\n,]/).map(l => l.trim()).filter(l => l !== '');
     const lines: string[] = [];
     
+    const aliases: Record<string, string[]> = {
+      'na': ['sodium'], 'k': ['potassium'], 'cl': ['chloride'], 'ca': ['calcium'],
+      'mg': ['magnesium'], 'phos': ['phosphorus', 'po4'], 'fbs': ['sugar', 'glucose', 'rbs'],
+      'rbs': ['random blood sugar', 'rbs'],
+      'bua': ['uric acid', 'blood uric acid', 'blooduricacid'], 'crea': ['creatinine'], 'urinalysis': ['ua'],
+      'fecalysis': ['stool exam', 'stool analysis'], 'cbc': ['complete blood count'],
+      'tpag': ['albumin globulin'], 'trop i': ['troponin'], 'hba1c': ['glycated hemoglobin', 'a1c'],
+      'tsh': ['thyroid stimulating hormone'], 'lipid profile': ['lipid panel', 'nonfasting lp'],
+      'ogtt': ['glucose tolerance'], 'blood cs': ['bcs', 'blood culture & sensitivity'],
+      'coombs test': ['direct coombs', 'indirect coombs', 'coombs'],
+      'tb': ['total bilirubin', 'totalbilirubin'], 'db': ['direct bilirubin', 'directbilirubin'], 'ib': ['indirect bilirubin', 'indirectbilirubin'],
+      'c3': ['complement 3'], 'anti-dsdna': ['dsdna', 'anti dsdna'],
+      'ua rbc morph': ['urine rbc morphology', 'rbc morphology', 'urine rbc morph'],
+      'anti-hcv': ['hcv', 'anti hcv'],
+      'anti-hbs': ['hbs', 'anti hbs'],
+      'anti-hbc total': ['hbc total', 'anti hbc total'],
+      '25-hydroxy vit d': ['vit d', 'vitd', 'vitamin d'],
+      'nh3': ['ammonia'],
+      'tb quantiferon': ['quantiferon', 'tb quant'],
+      'blood typing': ['blood type', 'bt', 'bloodtyping'],
+      'bt': ['blood type', 'blood typing', 'bloodtyping'],
+      'tb pcr / mtb-rif pcr (sputum)': ['sputum mtbrif', 'mtb-rif', 'mtb rif', 'gene xpert sputum', 'genexpert sputum'],
+      'mtb-rif (sputum)': ['sputum mtbrif', 'mtb-rif', 'mtb rif', 'gene xpert sputum', 'genexpert sputum'],
+      'tsh (thyroid stimulating hormone)': ['tsh', 'thyroid stimulating hormone'],
+      'ft3 (free triiodothyronine)': ['ft3', 'free triiodothyronine'],
+      'ft4 (free thyroxine)': ['ft4', 'free thyroxine'],
+      'anti-tpo (anti-thyroid peroxidase antibody)': ['anti-tpo', 'tpo', 'anti-thyroid peroxidase antibody'],
+      '17-ohp (17a-hydroxyprogesterone)': ['17-ohp', '17a-hydroxyprogesterone'],
+      'trab (tsh receptor antibody)': ['trab', 'tsh receptor antibody'],
+      'hgh (growth hormone)': ['hgh', 'growth hormone'],
+      'igf-1 (insulin-like growth factor 1)': ['igf-1', 'insulin-like growth factor 1'],
+      'acth (adrenocorticotropic hormone)': ['acth', 'adrenocorticotropic hormone'],
+      'fsh': ['follicle-stimulating hormone'],
+      'lh': ['luteinizing hormone'],
+      'dhea-s': ['dehydroepiandrosterone', 'dheas'],
+      'ipth': ['pth', 'parathyroid hormone'],
+      'bhcg': ['hcg', 'human chorionic gonadotropin'],
+      '4plex test': ['4plex', 'sars-cov-2', 'influenza', 'rsv'],
+      'spep': ['serum protein electrophoresis'],
+      'upep': ['urine protein electrophoresis'],
+      'serum total protein': ['total protein', 'tp'],
+      'total urine protein': ['urine total protein', 'urine tp'],
+      '24h urine': ['24 hour urine', '24-hour urine'],
+      'tissue biopsy': ['biopsy', 'histopathology', 'surgical pathology'],
+      'cytology (bf)': ['fluid cytology', 'cytology'],
+    };
+
     rawLines.forEach(line => {
       const lower = line.toLowerCase();
-      if (lower.includes('lipid panel')) {
-        lines.push('Total cholesterol', 'Triglycerides', 'LDL', 'HDL');
+      
+      // Check if the whole line matches a known test or alias
+      const isWholeMatch = lookup.some(entry => 
+        entry.testName.toLowerCase() === lower || 
+        (aliases[entry.testName.toLowerCase()] && aliases[entry.testName.toLowerCase()].some(v => v.toLowerCase() === lower))
+      );
+
+      if (isWholeMatch) {
+        lines.push(line);
+      } else if (lower.includes('full hepatitis profile')) {
+        lines.push('Full Hepatitis Profile');
+      } else if (lower.includes('hepatitis b profile')) {
+        lines.push('Hepatitis B Profile');
+      } else if (lower.includes('lipid panel') || lower.includes('lipid profile')) {
+        lines.push('Lipid profile');
       } else if (lower.includes('hepatitis panel')) {
         lines.push('HBsAg', 'Anti-HBs', 'Anti-HBc Total', 'Anti-HCV');
+      } else if (lower === 'spep') {
+        lines.push('SPEP', 'Serum Total Protein');
+      } else if (lower === 'upep') {
+        lines.push('UPEP', 'Total Urine Protein');
+      } else if (line.includes(' ')) {
+        // If it contains spaces and didn't match as a whole, split by space
+        const parts = line.split(/\s+/).filter(p => p.trim() !== '');
+        lines.push(...parts);
       } else {
         lines.push(line);
       }
@@ -124,48 +212,44 @@ const TalongTab: React.FC = () => {
       const lowerLine = line.toLowerCase();
       const normalizedInput = lowerLine.replace(/[^a-z0-9]/g, '');
       
+      // Strictness: Ignore very short inputs that aren't known aliases
+      const isKnownShortAlias = ['na', 'k', 'cl', 'ca', 'mg', 'c3', 'bt', 'ua'].includes(normalizedInput);
+      if (normalizedInput.length < 3 && !isKnownShortAlias) {
+        return null;
+      }
+
       // Try exact match first (normalized)
       let match = lookup.find(entry => 
         entry.testName.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedInput ||
-        (entry.testName.toUpperCase() === 'UA' && normalizedInput === 'urinalysis') ||
-        (entry.testName.toUpperCase() === 'UA' && normalizedInput === 'ua')
+        (entry.testName.toLowerCase() === 'urinalysis' && (normalizedInput === 'ua' || normalizedInput === 'urinalysis'))
       );
 
       // Try partial match if no exact match
       if (!match) {
-        // Sort lookup by name length descending to match longer specific names first
         const sortedLookup = [...lookup].sort((a, b) => b.testName.length - a.testName.length);
         
-        // 1. Try prefix match (Test name starts with input) - e.g. "urinalysi" matches "Urinalysis"
-        match = sortedLookup.find(entry => 
-          entry.testName.toLowerCase().startsWith(lowerLine)
-        );
-
-        // 2. Try contains match (only if test name > 3 chars to avoid 'Na' matching 'urinalysis')
-        if (!match) {
+        // Prefix match - require at least 4 characters for safety
+        if (lowerLine.length >= 4) {
           match = sortedLookup.find(entry => 
-            (entry.testName.length > 3 && lowerLine.includes(entry.testName.toLowerCase())) ||
-            (lowerLine.length > 3 && entry.testName.toLowerCase().includes(lowerLine))
+            entry.testName.toLowerCase().startsWith(lowerLine)
+          );
+        }
+
+        // Contains match - require at least 5 characters
+        if (!match && lowerLine.length >= 5) {
+          match = sortedLookup.find(entry => 
+            (entry.testName.length > 5 && lowerLine.includes(entry.testName.toLowerCase())) ||
+            (lowerLine.length > 5 && entry.testName.toLowerCase().includes(lowerLine))
           );
         }
       }
 
       // Try aliases
       if (!match) {
-        const aliases: Record<string, string[]> = {
-          'na': ['sodium'], 'k': ['potassium'], 'cl': ['chloride'], 'ca': ['calcium'],
-          'mg': ['magnesium'], 'phos': ['phosphorus', 'po4'], 'fbs': ['sugar', 'glucose'],
-          'bua': ['uric acid'], 'crea': ['creatinine'], 'ua': ['urinalysis'],
-          'fecalysis': ['stool exam', 'stool analysis'], 'cbc': ['complete blood count'],
-          'tpag': ['albumin globulin'], 'trop i': ['troponin'], 'hba1c': ['glycated hemoglobin'],
-          'ogtt': ['glucose tolerance'], 'blood cs': ['bcs', 'blood culture & sensitivity'],
-          'coombs test': ['direct coombs', 'indirect coombs', 'coombs'],
-        };
-
         const matchAlias = Object.entries(aliases).find(([key, vals]) => {
           return vals.some(v => 
             normalizedInput === v.replace(/[^a-z0-9]/g, '') ||
-            (normalizedInput.length > 3 && v.replace(/[^a-z0-9]/g, '').startsWith(normalizedInput))
+            (normalizedInput.length >= 4 && v.replace(/[^a-z0-9]/g, '').startsWith(normalizedInput))
           );
         });
 
@@ -177,33 +261,16 @@ const TalongTab: React.FC = () => {
 
       if (match) return { ...match, originalInput: line };
 
-      // Better fallback based on keywords
-      let fallbackSpecimen = 'Blood';
-      let fallbackTop = 'Unidentified request';
-      let fallbackForm = 'Chemistry';
-
+      // Keyword based matching for high-confidence non-lookup items
       if (lowerLine.includes('stool') || lowerLine.includes('fecal')) {
-        fallbackSpecimen = 'Stool';
-        fallbackTop = 'N/A';
-        fallbackForm = 'Clinical Microscopy';
+        return { testName: line, specimen: 'Stool', top: 'N/A', formType: 'Clinical Microscopy', originalInput: line };
       } else if (lowerLine.includes('urine') || lowerLine.includes('ua')) {
-        fallbackSpecimen = 'Urine';
-        fallbackTop = 'N/A';
-        fallbackForm = 'Urinalysis';
-      } else if (lowerLine.includes('csf')) {
-        fallbackSpecimen = 'CSF';
-        fallbackTop = 'N/A';
-        fallbackForm = 'Chemistry';
+        return { testName: line, specimen: 'Urine', top: 'N/A', formType: 'Urinalysis', originalInput: line };
       }
 
-      return { 
-        testName: line, 
-        specimen: fallbackSpecimen, 
-        top: fallbackTop, 
-        formType: fallbackForm, 
-        originalInput: line 
-      };
-    });
+      // If no match and no high-confidence keyword, return null (filter out)
+      return null;
+    }).filter((t): t is (LookupEntry & { originalInput: string }) => t !== null);
 
     // Grouping Logic
     const groupedRequests: LabRequest[] = [];
@@ -214,7 +281,7 @@ const TalongTab: React.FC = () => {
 
     matchedTests.forEach(test => {
       const nameUpper = test.testName.toUpperCase();
-      const isSpecial = nameUpper.includes('BIOFIRE') || nameUpper.includes('GENEXPERT') || nameUpper.includes('MTB/RIF');
+      const isSpecial = nameUpper.includes('BIOFIRE') || nameUpper.includes('GENEXPERT') || nameUpper.includes('MTB/RIF') || nameUpper.includes('4PLEX');
       const isApas = nameUpper.includes('APAS PANEL');
       
       if (isSpecial) {
@@ -249,10 +316,26 @@ const TalongTab: React.FC = () => {
       
       // Handle naming for non-blood
       const requestsList = tests.map(t => {
+        const lower = t.testName.toLowerCase();
+        if (lower === 'full hepatitis profile') {
+          return 'Full Hepatitis Profile (HBsAg, Anti-HBs, Anti-HBc Total, HBeAg, Anti-HBe, Anti-HAV IgM, Anti-HCV, Anti-HBc IgM)';
+        }
+        if (lower === 'hepatitis b profile') {
+          return 'Hepatitis B Profile (HBsAg, Anti-HBs, Anti-HBc Total, HBeAg, Anti-HBe, Anti-HBc IgM)';
+        }
+        if (lower === 'lipid profile') {
+          return 'Lipid profile (Triglycerides, Total cholesterol, LDL, HDL)';
+        }
+
         if (t.specimen !== 'Blood' && !t.testName.toLowerCase().includes(t.specimen.toLowerCase())) {
           if (t.testName.toUpperCase() === 'UA') return 'Urinalysis';
           if (t.testName.toUpperCase() === 'FECALYSIS') return 'Fecalysis';
+          if (t.specimen === 'Urine' && t.testName.toLowerCase() === 'urinalysis') return 'Urinalysis';
+          if (t.specimen === 'Urine') return `Urine ${t.testName}`;
           return `${t.specimen} ${t.testName}`;
+        }
+        if (t.specimen === 'Urine' && t.testName.toLowerCase() !== 'urinalysis' && !t.testName.toLowerCase().startsWith('urine')) {
+          return `Urine ${t.testName}`;
         }
         return t.testName;
       }).join(', ');
@@ -285,20 +368,16 @@ const TalongTab: React.FC = () => {
     const matDetails: Record<string, MaterialDetail> = {};
     const rems = new Set<string>();
     const criticalRems: Reminder[] = [];
-    let cupCount = 0;
     let bcsCount = 0;
     const iceTests = new Set<string>();
     let isLactate = false;
 
-    const activeForms = formList.filter(f => f.name || f.requests_list);
-
-    activeForms.forEach(form => {
+    formList.filter(f => f.name || f.requests_list).forEach(form => {
       const tube = form.tube_top.toUpperCase();
       const requests = form.requests_list.toUpperCase();
       const specimen = form.specimen_type.toLowerCase();
 
       if (requests.includes('APAS PANEL')) {
-        // Special case for APAS Panel: 2 Red + 5 Blue (White)
         if (!matDetails['RED']) matDetails['RED'] = { count: 0, tests: [] };
         matDetails['RED'].count += 2;
         matDetails['RED'].tests.push('APAS Panel (2 Red)');
@@ -313,14 +392,13 @@ const TalongTab: React.FC = () => {
       }
 
       if (CUP_SPECIMENS.includes(specimen)) {
-        cupCount++;
         if (!matDetails['SPECIMEN CUP']) matDetails['SPECIMEN CUP'] = { count: 0, tests: [] };
         matDetails['SPECIMEN CUP'].count++;
         matDetails['SPECIMEN CUP'].tests.push(form.requests_list);
       }
 
-      if (requests.includes('BLOOD CS') || requests.includes('BLOOD C/S') || requests.includes('BCS') || requests.includes('BLOOD CULTURE')) {
-        bcsCount++;
+      if (requests.includes('BLOOD CS') || requests.includes('BCS') || requests.includes('BLOOD CULTURE')) {
+        bcsCount += (requests.includes('X2') || requests.includes('X 2')) ? 2 : 1;
       }
 
       if (requests.includes('ANAEROBIC CULTURE')) {
@@ -329,20 +407,72 @@ const TalongTab: React.FC = () => {
         matDetails['ANAEROBIC CULTURE BOTTLE'].tests.push('Anaerobic Culture');
       }
 
-      // Reminders
       if (tube === 'BLUE') rems.add("BLUE TOP: Fill to the indicator line.");
+      if (tube === 'GREEN') rems.add("GREEN TOP: Fill to the line (4mL).");
       if (requests.includes('VANCO TROUGH')) rems.add("For Vanco Trough, Cover red top with carbon paper prior to extraction. Fill at least 3mL.");
       
-      ['ICA', 'NH3', 'LACTATE'].forEach(test => {
-        if (requests.includes(test) || (test === 'ICA' && tube === 'GREEN')) {
-          iceTests.add(test);
-          if (test === 'LACTATE') isLactate = true;
-        }
-      });
+      if (requests.includes('ICA') || (requests.includes('CALCIUM') && tube === 'GREEN')) {
+        iceTests.add('iCa');
+      }
+      if (requests.includes('LACTATE')) {
+        iceTests.add('Lactate');
+      }
+      if (requests.includes('NH3') || requests.includes('AMMONIA')) {
+        iceTests.add('Ammonia');
+      }
+      if (requests.includes('PLASMA K')) {
+        rems.add("PLASMA K: No tourniquet. No ice needed.");
+      }
 
       if (requests.includes('HBA1C')) rems.add("For HbA1c, fill to at least 2mL. Do not use a microtainer tube.");
       if (requests.includes('CBC')) rems.add("For CBC, do not submit <1mL on a 4mL tube.");
       if (requests.includes('ESR')) rems.add("ESR: Needs to be at least 2 mL.");
+      
+      if (requests.includes('TB QUANTIFERON')) {
+        const isPedia = parseInt(manualAge) < 18 || manualAge.toLowerCase().includes('mo') || manualAge.toLowerCase().includes('day');
+        if (!isPedia) {
+          if (!matDetails['GREEN']) matDetails['GREEN'] = { count: 0, tests: [] };
+          matDetails['GREEN'].count++; // Add second tube for adult
+          matDetails['GREEN'].tests.push('TB Quantiferon (2nd tube)');
+        }
+        rems.add("TB Quantiferon: 2 Green tops for adults, 1-2 for pedia. Mon-Thu only. Cut-off: 3:00 PM.");
+      }
+      if (form.form_type.toUpperCase() === 'MRL' && !requests.includes('STOOL AFB') && !requests.includes('TB QUANTIFERON') && !requests.includes('GENEXPERT')) {
+        rems.add("MRL: 8:00 AM - 3:00 PM, Monday to Friday.");
+      }
+      if (requests.includes('STOOL AFB')) {
+        rems.add("Stool AFB: Monday-Thursday only. Cut-off: 3:00 PM.");
+      }
+      if (requests.includes('GENEXPERT')) {
+        rems.add("GeneXpert: Monday and Friday only (8 AM - 3 PM) in MRL and TB-DOTS.");
+      }
+      if (requests.includes('4PLEX')) {
+        rems.add("4PLEX: Swab nares (longer) and throat (other). Retrieve VTM from Molecular Lab (2nd flr). Printed labels preferred.");
+      }
+      if (requests.includes('SPEP')) {
+        rems.add("SPEP: MWF 8-9AM. Needs simultaneous Serum Total Protein. Reader's fee P200.");
+      }
+      if (requests.includes('UPEP')) {
+        rems.add("UPEP: MWF 8-9AM. Full cup first void morning urine. Needs simultaneous Total Urine Protein. Reader's fee P200.");
+      }
+      if (requests.includes('24H URINE')) {
+        rems.add("24H URINE: Icebox during collection. Cut-off 10 AM M-F.");
+      }
+      if (requests.includes('CYTOLOGY')) {
+        rems.add("Fluid Cytology: Fix 1:1 with 95% ethanol.");
+      }
+      if (specimen === 'tissue' || specimen === 'organ') {
+        rems.add("Tissue/Organ: Submerge in Formalin.");
+      }
+      if (requests.includes('PRBC')) {
+        rems.add("PRBC: Needs Cross-matching (XM) sample (Purple EDTA).");
+      }
+      if (requests.includes('PLATELET') || requests.includes('FFP')) {
+        rems.add("Platelet/FFP: Only if never transfused.");
+      }
+      if (requests.includes('CRYOPRECIPITATE')) {
+        rems.add("Cryoprecipitate: Needs waiver.");
+      }
     });
 
     if (bcsCount > 0) {
@@ -351,45 +481,107 @@ const TalongTab: React.FC = () => {
       matDetails['SPECIAL BOTTLE'].tests = [`Blood CS (Total Forms: ${bcsCount})`];
     }
 
-    // Ice Reminders
     if (iceTests.size > 0) {
-      if (isLactate) {
-        criticalRems.push({ text: "LACTATE COLLECTION: Do NOT tourniquet. Can use arterial blood. Send immediately on ice!", critical: true, type: 'ICE' });
-        if (iceTests.size > 1) {
-          criticalRems.push({ text: "ICE TRANSPORT: Use solid ice, place green top in glove. SEND IMMEDIATELY.", critical: true, type: 'ICE' });
-        }
-      } else {
-        criticalRems.push({ text: `ICE TRANSPORT: For ${Array.from(iceTests).join(' and ')} (Green Top), use solid crushed ice.`, critical: true, type: 'ICE' });
+      const testsStr = Array.from(iceTests).join(', ');
+      let iceMsg = `ICE TRANSPORT: For ${testsStr}, use solid crushed ice. SEND IMMEDIATELY!`;
+      
+      const noTourniquet = [];
+      if (iceTests.has('Lactate')) noTourniquet.push('Lactate');
+      if (iceTests.has('Ammonia')) noTourniquet.push('Ammonia');
+      
+      if (noTourniquet.length > 0) {
+        iceMsg += ` (No tourniquet for ${noTourniquet.join(' and ')}).`;
       }
+      
+      iceMsg += " Send directly to ClinChem after tagging in central labs.";
+      
+      criticalRems.push({ text: iceMsg, critical: true, type: 'ICE' });
     }
 
-    // ABG
     if (unstructured.toUpperCase().includes('ABG') || unstructured.toUpperCase().includes('VBG')) {
-      criticalRems.push({ text: "For ABG/VBG: Use 1cc tuberculin needle with 0.1 mL heparin, send with details written on a micropore.", critical: true, type: 'ABG' });
+      criticalRems.push({ text: "For ABG/VBG: Use 1cc tuberculin needle with 0.1 mL heparin, ice. Label with Ward, Bed, Name, Case #, Temp, FiO2, Time, Name. Bring to ABG 2nd floor near Ward 4.", critical: true, type: 'ABG' });
     }
 
-    // NucMed & MRL
     const now = new Date();
     const day = now.getDay();
     const hour = now.getHours();
 
-    const nucMedTests = activeForms.filter(f => f.form_type.toUpperCase() === 'NUCLEAR MEDICINE');
-    if (nucMedTests.length > 0) {
-      const open = hour >= 7 && hour < 9;
-      const status = open ? "OPEN (7-9 AM)" : "CLOSED (7-9 AM)";
+    if (formList.some(f => f.form_type.toUpperCase() === 'NUCLEAR MEDICINE')) {
+      const status = (hour >= 7 && hour < 9) ? "OPEN (7-9 AM)" : "CLOSED (7-9 AM)";
       criticalRems.push({ text: `NUCMED REQUESTED: ${status}`, critical: true, type: 'NUCMED' });
+
+      const nucmedRequests = formList.filter(f => f.form_type.toUpperCase() === 'NUCLEAR MEDICINE').map(f => f.requests_list.toUpperCase()).join(', ');
+
+      // Fasting reminders
+      if (nucmedRequests.includes('CORTISOL') || nucmedRequests.includes('HGH') || nucmedRequests.includes('GROWTH HORMONE') || nucmedRequests.includes('INSULIN') || nucmedRequests.includes('C-PEPTIDE') || nucmedRequests.includes('RENIN') || nucmedRequests.includes('ACTH')) {
+        rems.add("NUCMED FASTING: Cortisol, hGH, Insulin, C-Peptide, Renin, and ACTH require 8-12 hours fasting.");
+      }
+
+      // Day reminders
+      if (nucmedRequests.includes('FT3') || nucmedRequests.includes('FREE TRIIODOTHYRONINE') || nucmedRequests.includes('CORTISOL') || nucmedRequests.includes('PROLACTIN')) {
+        if (day !== 1 && day !== 3 && day !== 5) rems.add("FT3/Cortisol/Prolactin: Available M, W, F only.");
+      }
+      if (nucmedRequests.includes('25-HYDROXY VIT D') || nucmedRequests.includes('PTH') || nucmedRequests.includes('PARATHYROID HORMONE')) {
+        if (day !== 1 && day !== 2 && day !== 3 && day !== 4) rems.add("Vit D/PTH: Available Mon-Thu only.");
+      }
+      if (nucmedRequests.includes('HCG') || nucmedRequests.includes('HUMAN CHORIONIC GONADOTROPIN') || nucmedRequests.includes('17-OHP') || nucmedRequests.includes('17A-HYDROXYPROGESTERONE')) {
+        if (day !== 1 && day !== 4) rems.add("HCG/17-OHP: Available M, Th only.");
+      }
+      if (nucmedRequests.includes('ANTITHYROGLOBULIN') || nucmedRequests.includes('TPO') || nucmedRequests.includes('TESTOSTERONE') || nucmedRequests.includes('THYROGLOBULIN')) {
+        if (day !== 2 && day !== 4) rems.add("TPO/Testosterone/Thyroglobulin: Available T, Th only.");
+      }
+      if (nucmedRequests.includes('DHEAS') || nucmedRequests.includes('DEHYDROEPIANDROSTERONE')) {
+        if (day !== 1) rems.add("DHEAS: Available Mondays only.");
+      }
+      if (nucmedRequests.includes('TRAB') || nucmedRequests.includes('TSH RECEPTOR ANTIBODY')) {
+        const isLastMonday = () => {
+          if (day !== 1) return false;
+          const nextWeek = new Date(now);
+          nextWeek.setDate(now.getDate() + 7);
+          return nextWeek.getMonth() !== now.getMonth();
+        };
+        if (!isLastMonday()) rems.add("TRAB: Available Last Monday of the Month only.");
+      }
+      if (nucmedRequests.includes('HGH') || nucmedRequests.includes('GROWTH HORMONE') || nucmedRequests.includes('IGF-1') || nucmedRequests.includes('INSULIN-LIKE GROWTH FACTOR 1')) {
+        if (day !== 2) rems.add("hGH/IGF-1: Available Tuesdays only.");
+      }
+      if (nucmedRequests.includes('INSULIN') || nucmedRequests.includes('C-PEPTIDE') || nucmedRequests.includes('FSH') || nucmedRequests.includes('FOLLICLE-STIMULATING HORMONE') || nucmedRequests.includes('LH') || nucmedRequests.includes('LUTEINIZING HORMONE')) {
+        if (day !== 3) rems.add("Insulin/C-Peptide/FSH/LH: Available Wednesdays only.");
+      }
+      if (nucmedRequests.includes('ALDOSTERONE') || nucmedRequests.includes('RENIN') || nucmedRequests.includes('ESTRADIOL') || nucmedRequests.includes('ACTH') || nucmedRequests.includes('ADRENOCORTICOTROPIC HORMONE')) {
+        if (day !== 5) rems.add("Aldo/Renin/Estradiol/ACTH: Available Fridays only.");
+      }
     }
 
-    const mrlTests = activeForms.filter(f => f.form_type.toUpperCase() === 'MRL');
-    if (mrlTests.length > 0) {
-      const weekday = day >= 1 && day <= 5;
-      const open = weekday && hour >= 8 && hour < 16;
-      const cutoff = weekday && hour >= 15;
+    if (formList.some(f => f.form_type.toUpperCase() === 'MRL' || f.requests_list.toUpperCase().includes('STOOL AFB') || f.requests_list.toUpperCase().includes('TB QUANTIFERON') || f.requests_list.toUpperCase().includes('GENEXPERT'))) {
+      const isStoolAfbOrQuant = formList.some(f => f.requests_list.toUpperCase().includes('STOOL AFB') || f.requests_list.toUpperCase().includes('TB QUANTIFERON'));
+      const isGeneXpert = formList.some(f => f.requests_list.toUpperCase().includes('GENEXPERT'));
+      
+      let weekday = day >= 1 && day <= 5;
+      let cutoffHour = 15;
+      let scheduleMsg = "MRL REQUESTED";
+
+      if (isStoolAfbOrQuant) {
+        weekday = day >= 1 && day <= 4; // Mon-Thu only
+        scheduleMsg = "MRL/CENTRAL LAB (STOOL AFB/QUANTIFERON)";
+      } else if (isGeneXpert) {
+        weekday = day === 1 || day === 5; // Mon and Fri only
+        scheduleMsg = "GENEXPERT (MRL/TB-DOTS)";
+      }
+
+      const open = weekday && hour >= 8 && hour < 15;
+      const cutoff = weekday && hour >= cutoffHour;
+      
       let status = "CLOSED";
-      if (!weekday) status = "CLOSED (Weekend)";
+      if (!weekday) {
+        if (isStoolAfbOrQuant) status = "CLOSED (Mon-Thu only)";
+        else if (isGeneXpert) status = "CLOSED (Mon & Fri only)";
+        else status = "CLOSED (Weekend)";
+      }
       else if (cutoff) status = "CLOSED (Cut-off: 3 PM)";
-      else if (open) status = "OPEN (8 AM - 4 PM)";
-      criticalRems.push({ text: `MRL REQUESTED: ${status}`, critical: true, type: 'MRL' });
+      else if (open) status = "OPEN (8 AM - 3 PM)";
+      
+      criticalRems.push({ text: `${scheduleMsg}: ${status}`, critical: true, type: 'MRL' });
     }
 
     setMaterials(matDetails);
@@ -404,24 +596,6 @@ const TalongTab: React.FC = () => {
   };
 
   const [mode, setMode] = useState<'needs' | 'generator'>('needs');
-  const [customBg, setCustomBg] = useState<string | null>(localStorage.getItem('pgh_custom_bg'));
-
-  useEffect(() => {
-    if (customBg) {
-      localStorage.setItem('pgh_custom_bg', customBg);
-    }
-  }, [customBg]);
-
-  const handleBgUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCustomBg(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handlePrint = () => {
     try {
@@ -433,10 +607,10 @@ const TalongTab: React.FC = () => {
   };
 
   return (
-    <div id="form-tool-content" className="tool-content active">
+    <div id="form-tool-content" className="w-full">
       <div className="input-section">
         <div id="title-logo-wrapper">
-          <ClipboardList className="w-10 h-10 mr-3 text-[#334155]" />
+          <AnimatedTabIcon id="form-tool-content" isActive={true} size={32} />
           <h2 className="text-xl md:text-2xl">Lab Needs Assistant</h2>
         </div>
 
@@ -591,7 +765,7 @@ const TalongTab: React.FC = () => {
                 <label className="control-label min-w-[100px] md:min-w-0 text-xs md:text-sm">Collected By:</label>
                 <input 
                   type="text" 
-                  className="control-input flex-grow md:flex-initial text-sm" 
+                  className="control-input flex-grow md:flex-initial text-base" 
                   placeholder="CLK/INT ____"
                   value={collector}
                   onChange={(e) => setCollector(e.target.value)}
@@ -601,7 +775,7 @@ const TalongTab: React.FC = () => {
                 <label className="control-label min-w-[100px] md:min-w-0 text-xs md:text-sm">Time Collected:</label>
                 <input 
                   type="text" 
-                  className="control-input !w-full md:!w-[120px] flex-grow md:flex-initial text-sm" 
+                  className="control-input !w-full md:!w-[120px] flex-grow md:flex-initial text-base" 
                   placeholder="HH:MM am/pm"
                   value={timeCollected}
                   onChange={(e) => setTimeCollected(e.target.value)}
@@ -657,7 +831,7 @@ Na,K,Cl'
                     <label className="text-[10px] md:text-xs font-bold text-[#334155] mb-1 uppercase tracking-wider">Full Name</label>
                     <input 
                       type="text" 
-                      className="p-3 md:p-2 border border-[#ced4da] rounded text-sm md:text-base"
+                      className="p-3 md:p-2 border border-[#ced4da] rounded text-base"
                       value={manualName}
                       onChange={(e) => setManualName(e.target.value)}
                     />
@@ -667,7 +841,7 @@ Na,K,Cl'
                       <label className="text-[10px] md:text-xs font-bold text-[#334155] mb-1 uppercase tracking-wider">Location</label>
                       <input 
                         type="text" 
-                        className="p-3 md:p-2 border border-[#ced4da] rounded text-sm md:text-base"
+                        className="p-3 md:p-2 border border-[#ced4da] rounded text-base"
                         value={manualLocation}
                         onChange={(e) => setManualLocation(e.target.value)}
                       />
@@ -676,7 +850,7 @@ Na,K,Cl'
                       <label className="text-[10px] md:text-xs font-bold text-[#334155] mb-1 uppercase tracking-wider">Case Number</label>
                       <input 
                         type="text" 
-                        className="p-3 md:p-2 border border-[#ced4da] rounded text-sm md:text-base"
+                        className="p-3 md:p-2 border border-[#ced4da] rounded text-base"
                         value={manualCN}
                         onChange={(e) => setManualCN(e.target.value)}
                       />
@@ -687,7 +861,7 @@ Na,K,Cl'
                       <label className="text-[10px] md:text-xs font-bold text-[#334155] mb-1 uppercase tracking-wider">Age</label>
                       <input 
                         type="text" 
-                        className="p-3 md:p-2 border border-[#ced4da] rounded text-sm md:text-base"
+                        className="p-3 md:p-2 border border-[#ced4da] rounded text-base"
                         value={manualAge}
                         onChange={(e) => setManualAge(e.target.value)}
                       />
@@ -708,7 +882,7 @@ Na,K,Cl'
                       <input 
                         type="text" 
                         placeholder="MM/DD/YYYY"
-                        className="p-3 md:p-2 border border-[#ced4da] rounded text-xs md:text-sm"
+                        className="p-3 md:p-2 border border-[#ced4da] rounded text-base"
                         value={manualBirthday}
                         onChange={(e) => setManualBirthday(e.target.value)}
                       />
@@ -717,7 +891,7 @@ Na,K,Cl'
                   <div className="flex flex-col">
                     <label className="text-[10px] md:text-xs font-bold text-[#334155] mb-1 uppercase tracking-wider">Labs (Requests List)</label>
                     <textarea 
-                      className="p-3 md:p-2 border border-[#ced4da] rounded text-sm md:text-base !h-[100px] md:!h-[150px]"
+                      className="p-3 md:p-2 border border-[#ced4da] rounded text-base !h-[100px] md:!h-[150px]"
                       placeholder={"CBC\nUrinalysis"}
                       value={manualLabs}
                       onChange={(e) => setManualLabs(e.target.value)}
@@ -779,6 +953,13 @@ Na,K,Cl'
                                     <span>{count} {materialName}</span>
                                   </span>
                                 </div>
+                                <ul className="ml-4 mt-1 list-disc bg-transparent p-0">
+                                  {matDetail.tests.map((t, i) => (
+                                    <li key={i} className="text-[11px] text-gray-500 mb-0 ml-4 leading-none font-normal">
+                                      {t}
+                                    </li>
+                                  ))}
+                                </ul>
                               </li>
                             );
                           })}
@@ -869,11 +1050,16 @@ Na,K,Cl'
                       const aliases: Record<string, string[]> = {
                         'na': ['sodium'], 'k': ['potassium'], 'cl': ['chloride'], 'ca': ['calcium'],
                         'mg': ['magnesium'], 'phos': ['phosphorus', 'po4'], 'fbs': ['sugar', 'glucose'],
-                        'bua': ['uric acid'], 'crea': ['creatinine'], 'ua': ['urinalysis'],
+                        'bua': ['uric acid', 'blood uric acid', 'blooduricacid'], 'crea': ['creatinine'], 'urinalysis': ['ua'],
                         'fecalysis': ['stool exam', 'stool analysis'], 'cbc': ['complete blood count'],
-                        'tpag': ['albumin globulin'], 'trop i': ['troponin'], 'hba1c': ['glycated hemoglobin'],
+                        'tpag': ['albumin globulin'], 'trop i': ['troponin'], 'hba1c': ['glycated hemoglobin', 'a1c'],
+                        'tsh': ['thyroid stimulating hormone'], 'lipid profile': ['lipid panel', 'nonfasting lp'],
                         'ogtt': ['glucose tolerance'], 'blood cs': ['bcs', 'blood culture & sensitivity'],
                         'coombs test': ['direct coombs', 'indirect coombs', 'coombs'],
+                        'tb': ['total bilirubin', 'totalbilirubin'], 'db': ['direct bilirubin', 'directbilirubin'], 'ib': ['indirect bilirubin', 'indirectbilirubin'],
+                        'c3': ['complement 3'], 'dsdna': ['anti-dsdna', 'anti dsdna'],
+                        '25-hydroxy vit d': ['vit d', 'vitd', 'vitamin d'],
+                        'nh3': ['ammonia'],
                       };
 
                       const matchAlias = Object.entries(aliases).some(([key, vals]) => {
@@ -932,27 +1118,13 @@ Na,K,Cl'
               <strong>• Printing:</strong> Set scale to 88% and ensure paper size is A4.
             </p>
             <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
-              <span className="text-sm font-bold text-[#334155]">Custom Form Background:</span>
-              <input 
-                type="file" 
-                accept="image/*" 
-                onChange={handleBgUpload}
-                className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#334155] file:text-white hover:file:bg-[#475569]"
-              />
-              {customBg && (
-                <button 
-                  onClick={() => setCustomBg(null)}
-                  className="text-xs text-red-500 hover:underline bg-transparent border-none shadow-none p-0"
-                >
-                  Reset to Default
-                </button>
-              )}
+              <p className="text-xs text-gray-500 italic">Scale to 88% and ensure paper size is A4 for best results.</p>
             </div>
           </div>
 
           <div className="form-previews flex flex-wrap gap-[15px] p-0 justify-start print-content">
             {forms.map((form, idx) => (
-              <LabForm key={idx} form={form} onUpdate={(updated) => updateForm(idx, updated)} customBg={customBg} />
+              <LabForm key={idx} form={form} onUpdate={(updated) => updateForm(idx, updated)} />
             ))}
           </div>
         </>

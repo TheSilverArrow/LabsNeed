@@ -5,12 +5,22 @@
 }
 
 @layer base {
+  html, body {
+    @apply h-full overflow-hidden;
+  }
   html {
     @apply text-[14px] md:text-[16px];
   }
   body {
-    @apply bg-[#cbd5e1] p-2 md:p-5 m-0;
+    @apply bg-[#cbd5e1] m-0 transition-colors duration-300;
     font-family: "Kumbh Sans", sans-serif;
+  }
+  .dark body {
+    @apply bg-[#0f172a] text-slate-200;
+  }
+  /* Base font size for form elements to prevent auto-zoom on iOS */
+  input, textarea, select {
+    font-size: 16px;
   }
 }
 
@@ -22,27 +32,51 @@
 .nav-tab {
   @apply px-[24px] py-[10px] cursor-pointer bg-[#f3f4f6] text-[#334155] border-2 border-[#334155] rounded-t-[7px] rounded-b-none font-bold transition-all text-[15px] relative z-10 mx-[2px];
 }
+.dark .nav-tab {
+  @apply bg-[#1e293b] text-white border-[#475569];
+}
 
 .nav-tab.active {
   @apply bg-[#334155] text-white border-[#334155] z-20;
+}
+.dark .nav-tab.active {
+  @apply bg-[#334155] text-white border-[#475569];
 }
 
 .nav-tab:hover:not(.active) {
   @apply bg-[#e5e7eb];
 }
+.dark .nav-tab:hover:not(.active) {
+  @apply bg-[#334155];
+}
 
 /* Input Section Card */
+/* Global Label and Header Color Fix for Light Mode */
+label, h3, .control-label, .instruction-text2, .instruction-text3 {
+  color: #334155 !important;
+}
+
+.dark label, .dark h3, .dark .control-label, .dark .instruction-text2, .dark .instruction-text3 {
+  color: white !important;
+}
+
 .input-section {
-  @apply bg-white px-3 md:px-[25px] pb-[5px] rounded-[20px] shadow-[0_8px_20px_rgba(0,0,0,0.1)] mb-0 relative border-t-[10px] border-t-[#334155] text-base md:text-[25px] z-0;
+  @apply bg-white px-3 md:px-[25px] pb-[5px] rounded-[20px] shadow-[0_8px_20px_rgba(0,0,0,0.1)] mb-0 relative border-t-[10px] border-t-[#334155] text-base md:text-[25px] z-0 transition-all duration-300;
+}
+.dark .input-section {
+  @apply bg-[#1e293b] border-t-[#64748b] shadow-[0_8px_30px_rgba(0,0,0,0.3)];
 }
 
 /* Header with Logo and Title */
 #title-logo-wrapper {
   @apply flex items-center pt-[10px] mb-[15px];
 }
+.dark #title-logo-wrapper h2 {
+  @apply text-white;
+}
 
 #title-logo-wrapper h2 {
-  @apply m-0 p-0 text-lg md:text-[24px] font-bold text-[#240303];
+  @apply m-0 p-0 text-lg md:text-[24px] font-bold text-[#334155];
 }
 
 #logo-image {
@@ -51,15 +85,24 @@
 
 /* Collector Control Bar */
 #collector-control {
-  @apply mb-[15px] p-[10px] border border-[#ddd] rounded-[8px] bg-[#f5f5f5] flex items-center gap-3 md:gap-5 flex-wrap;
+  @apply mb-[15px] p-[10px] border border-[#ddd] rounded-[8px] bg-[#f5f5f5] flex items-center gap-3 md:gap-5 flex-wrap transition-colors duration-300;
+}
+.dark #collector-control {
+  @apply bg-[#0f172a] border-[#334155];
 }
 
 .control-label {
-  @apply font-bold text-[#333] text-sm md:text-[18px] whitespace-nowrap;
+  @apply font-bold !text-[#334155] text-sm md:text-[18px] whitespace-nowrap;
+}
+.dark .control-label {
+  @apply !text-white;
 }
 
 .control-input {
-  @apply w-full md:w-[200px] p-[8px] border border-[#ccc] rounded-[4px] md:ml-[10px] text-[15px] focus:outline-none focus:border-[#334155];
+  @apply w-full md:w-[200px] p-[8px] border border-[#ccc] rounded-[4px] md:ml-[10px] text-[15px] focus:outline-none focus:border-[#334155] transition-colors duration-300;
+}
+.dark .control-input {
+  @apply bg-[#1e293b] border-[#475569] text-[#f1f5f9] focus:border-[#64748b];
 }
 
 /* Input Group */
@@ -68,23 +111,39 @@
 }
 
 .input-column {
-  @apply flex-1 min-w-0 p-3 md:p-[15px] border-none rounded-[8px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)];
+  @apply flex-1 min-w-0 p-3 md:p-[15px] border-none rounded-[8px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)] transition-colors duration-300;
+}
+.dark .input-column {
+  @apply bg-[#334155] shadow-[0_2px_8px_rgba(0,0,0,0.2)];
 }
 
 .instruction-text2 {
-  @apply text-[16px] mt-[5px] font-bold text-[#334155];
+  @apply text-[16px] mt-[5px] font-bold !text-[#334155];
+}
+.dark .instruction-text2, .dark .instruction-text3 {
+  @apply !text-white;
 }
 
 .instruction-text3 {
-  @apply text-[16px] mt-[5px] font-bold text-[#334155];
+  @apply text-[16px] mt-[5px] font-bold !text-[#334155];
 }
 
 textarea {
   @apply w-full h-[300px] p-[15px] border-2 border-[#334155] rounded-[6px] resize-y box-border mb-[10px] font-mono text-[13px] transition-all focus:border-[#334155] focus:shadow-[0_0_0_0.2rem_rgba(51,65,85,0.25)] focus:outline-none;
 }
+.dark textarea {
+  @apply bg-[#0f172a] text-white border-[#475569] focus:border-[#64748b] focus:shadow-[0_0_0_0.2rem_rgba(100,116,139,0.25)];
+}
 
 #structured-input {
-  @apply border-[#334155] bg-[#f8f9fa];
+  @apply border-[#334155] bg-[#f8f9fa] transition-colors duration-300;
+}
+.dark #structured-input {
+  @apply bg-[#0f172a] border-[#475569];
+}
+
+.dark #structured-input input, .dark #structured-input textarea {
+  @apply bg-[#1e293b] border-[#475569] text-white focus:border-[#64748b];
 }
 
 /* Buttons */
@@ -98,11 +157,17 @@ textarea {
 
 /* Form Previews Header */
 .form-header-container {
-  @apply flex justify-between items-center border-b-2 border-b-[#e0e0e0] mb-0 pt-[20px] pl-[10px] pb-0;
+  @apply flex justify-between items-center border-b-2 border-b-[#e0e0e0] mb-0 pt-[20px] pl-[10px] pb-0 transition-colors duration-300;
+}
+.dark .form-header-container {
+  @apply border-[#334155];
 }
 
 .form-header-container h2 {
-  @apply text-[#240303] m-0 text-[24px] font-bold;
+  @apply text-[#334155] m-0 text-[24px] font-bold;
+}
+.dark .form-header-container h2 {
+  @apply text-white;
 }
 
 #pdfButton {
@@ -111,26 +176,42 @@ textarea {
 
 /* Preview Instructions */
 #preview-instructions {
-  @apply bg-white border border-[#ced4da] p-[15px] rounded-[8px] my-[20px] shadow-[0_6px_15px_rgba(0,0,0,0.05)];
+  @apply bg-white border border-[#ced4da] p-[15px] rounded-[8px] my-[20px] shadow-[0_6px_15px_rgba(0,0,0,0.05)] transition-colors duration-300;
+}
+.dark #preview-instructions {
+  @apply bg-[#1e293b] border-[#334155] shadow-[0_6px_20px_rgba(0,0,0,0.3)];
 }
 
 .instruction-text {
   @apply text-[16px] mt-[5px] text-[#374151];
 }
+.dark .instruction-text {
+  @apply text-white;
+}
+.dark .instruction-text strong {
+  @apply text-white;
+}
 
 /* Form Container */
 .form-container {
-  @apply bg-white border border-[#ccc] shadow-[0_2px_8px_rgba(0,0,0,0.1)] w-full max-w-[415px] min-h-[587px] relative overflow-hidden rounded-[4px] mx-auto md:mx-0;
+  @apply bg-white border border-[#ccc] shadow-[0_2px_8px_rgba(0,0,0,0.1)] w-full max-w-[415px] aspect-[415/587] relative overflow-hidden rounded-[4px] mx-auto md:mx-0 transition-all duration-300;
+  container-type: inline-size;
+}
+.dark .form-container {
+  @apply bg-[#1e293b] border-[#334155] shadow-[0_4px_12px_rgba(0,0,0,0.4)];
 }
 
 .form-preview {
-  @apply w-full h-[587px] bg-no-repeat relative bg-center bg-gray-50 border border-gray-200;
-  background-image: url('/single_lrf.png');
+  @apply w-full h-full bg-no-repeat relative bg-center bg-gray-50 border border-gray-200;
   background-size: 100% 100%;
 }
 
 .overlay-field {
-  @apply absolute font-sans text-black border border-dashed border-[#007bff] bg-[rgba(0,123,255,0.1)] px-[2px] box-border z-10 resize-none overflow-hidden text-left whitespace-pre-wrap origin-top-left;
+  @apply absolute font-sans text-black border border-dashed border-[#007bff] bg-[rgba(0,123,255,0.1)] px-[2px] box-border z-10 resize-none overflow-hidden text-left whitespace-pre-wrap origin-top-left transition-colors duration-300;
+}
+
+.dark .overlay-field {
+  @apply bg-[rgba(0,123,255,0.1)] text-black border-[#007bff];
 }
 
 .overlay-field:not(.diagnosis):not(.requests-field) {
@@ -145,21 +226,21 @@ textarea {
   @apply text-center;
 }
 
-/* Coordinates */
-.ward-location { top: 150px; left: 8px; width: 310px; height: 26px; text-transform: uppercase;}
-.patient-name { top: 190px; left: 8px; width: 310px; height: 26px; text-transform: uppercase;}
-.age-sex-age { top: 225px; left: 10px; width: 50px; height: 25px; }
-.age-sex-sex { top: 225px; left: 149px; width: 50px; height: 25px; }
-.case-number { top: 225px; left: 232px; width: 130px; height: 25px; }
-.birthday { top: 252px; left: 90px; width: 300px; height: 25px; }
-.diagnosis { top: 285px; left: 90px; width: 340px; height: 30px; }
-.requested-by { top: 335px; left: 8px; width: 380px; height: 30px; }
-.requests-field { top: 390px; left: 8px; width: 400px; height: 45px; }
-.specimen-type { top: 465px; left: 8px; width: 75px; height: 30px; }
-.site-of-collection { top: 468px; left: 110px; width: 75px; height: 30px; }
-.time-collected { top: 538px; left: 210px; width: 90px; height: 30px; }
-.date-collected { top: 538px; left: 320px; width: 90px; height: 30px; }
-.collected-by { top: 465px; left: 220px; width: 150px; height: 30px; }
+/* Coordinates - Percentage based for responsiveness */
+.ward-location { top: 25.55%; left: 1.93%; width: 74.7%; height: 4.43%; text-transform: uppercase;}
+.patient-name { top: 32.37%; left: 1.93%; width: 74.7%; height: 4.43%; text-transform: uppercase;}
+.age-sex-age { top: 38.33%; left: 2.41%; width: 12.05%; height: 4.26%; }
+.age-sex-sex { top: 38.33%; left: 35.9%; width: 12.05%; height: 4.26%; }
+.case-number { top: 38.33%; left: 55.9%; width: 31.33%; height: 4.26%; }
+.birthday { top: 42.93%; left: 21.69%; width: 72.29%; height: 4.26%; }
+.diagnosis { top: 48.55%; left: 21.69%; width: 81.93%; height: 5.11%; }
+.requested-by { top: 57.07%; left: 1.93%; width: 91.57%; height: 5.11%; }
+.requests-field { top: 66.44%; left: 1.93%; width: 96.39%; height: 7.67%; }
+.specimen-type { top: 79.22%; left: 1.93%; width: 18.07%; height: 5.11%; }
+.site-of-collection { top: 79.73%; left: 26.51%; width: 18.07%; height: 5.11%; }
+.time-collected { top: 91.65%; left: 50.6%; width: 21.69%; height: 5.11%; }
+.date-collected { top: 91.65%; left: 77.11%; width: 21.69%; height: 5.11%; }
+.collected-by { top: 79.22%; left: 53.01%; width: 36.14%; height: 5.11%; }
 
 /* Materials & Reminders */
 .materials-and-reminders-group {
@@ -167,19 +248,31 @@ textarea {
 }
 
 .materials-estimation-box {
-  @apply w-full border border-[#ced4da] rounded-[8px] bg-[#f8f9fa] shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] p-[15px];
+  @apply w-full border border-[#ced4da] rounded-[8px] bg-[#f8f9fa] shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] p-[15px] transition-colors duration-300;
+}
+.dark .materials-estimation-box {
+  @apply bg-[#0f172a] border-[#475569];
 }
 
 .reminders-section-box {
-  @apply flex-grow w-full border border-[#ced4da] rounded-[8px] bg-[#f8f9fa] shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] p-[15px];
+  @apply flex-grow w-full border border-[#ced4da] rounded-[8px] bg-[#f8f9fa] shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] p-[15px] transition-colors duration-300;
+}
+.dark .reminders-section-box {
+  @apply bg-[#0f172a] border-[#475569];
 }
 
 .material-column {
   @apply list-none p-0 m-0 min-w-[100px];
 }
+.dark .material-column h3, .dark .reminders-section-box h3 {
+  @apply text-white border-[#475569];
+}
 
 .material-column > ul > li {
   @apply py-[5px] border-b border-b-[#eee] text-[1.1rem] font-semibold;
+}
+.dark .material-column > ul > li {
+  @apply border-[#334155] text-white;
 }
 
 .material-column li:last-child {
@@ -188,6 +281,9 @@ textarea {
 
 .critical-reminder {
   @apply font-bold text-[#334155];
+}
+.dark .critical-reminder {
+  @apply text-white;
 }
 
 /* Tube Colors */
@@ -282,6 +378,47 @@ input:checked + .slider:before {
   }
 }
 
+.dark .mobile-menu-btn {
+  @apply bg-[#1e293b] border-[#475569] text-white;
+}
+
+.dark .mobile-menu-dropdown {
+  @apply bg-[#1e293b] border-[#334155] shadow-[0_10px_40px_rgba(0,0,0,0.5)];
+}
+
+.dark .mobile-menu-item {
+  @apply border-[#334155] text-white hover:bg-[#334155];
+}
+
+.dark .mobile-menu-item.active {
+  @apply bg-[#334155] text-white;
+}
+
+/* Lookup Table Modal */
+.dark .lookup-modal-content {
+  @apply bg-[#1e293b] text-white;
+}
+
+.dark .lookup-modal-header {
+  @apply bg-[#0f172a] border-[#334155];
+}
+
+.dark .lookup-modal-search {
+  @apply bg-[#0f172a] border-[#475569] text-white focus:border-[#64748b];
+}
+
+.dark .lookup-modal-table th {
+  @apply bg-[#0f172a] text-white border-[#334155];
+}
+
+.dark .lookup-modal-table tr {
+  @apply border-[#334155] hover:bg-[#334155]/50;
+}
+
+.dark .lookup-modal-footer {
+  @apply bg-[#0f172a] border-[#334155];
+}
+
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -307,5 +444,5 @@ input:checked + .slider:before {
 }
 
 .font-setter-input {
-  @apply w-[45px] h-[30px] p-[3px] border border-[#ced4da] rounded bg-white text-[15px] text-center ml-2 text-[#333];
+  @apply w-[45px] h-[30px] p-[3px] border border-[#ced4da] rounded bg-white text-[15px] text-center ml-2 text-[#334155];
 }

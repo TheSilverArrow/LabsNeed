@@ -610,7 +610,6 @@ const TalongTab: React.FC = () => {
     <div id="form-tool-content" className="w-full">
       <div className="input-section">
         <div id="title-logo-wrapper">
-          <AnimatedTabIcon id="form-tool-content" isActive={true} size={32} />
           <h2 className="text-xl md:text-2xl">Lab Needs Assistant</h2>
         </div>
 

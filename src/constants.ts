@@ -155,6 +155,7 @@ APAS Panel|Blood|Blue (+ Red)|MRL
 Antithrombin III|Blood|Blue|MRL
 Factor VIII Inhibitor|Blood|Blue|MRL
 Factor XI|Blood|Blue|MRL
+Factor XI Inhibitor|Blood|Blue|MRL
 Lupus Anticoagulant (SCT)|Blood|Blue|MRL
 Lupus Anticoagulant (DRVVT)|Blood|Blue|MRL
 iCa|Blood|Green|Chemistry
@@ -178,6 +179,8 @@ Coombs Test|Blood|Purple|Blood Bank
 Coombs|Blood|Purple|Blood Bank
 Renin|Blood|Purple|Nuclear Medicine
 ACTH (Adrenocorticotropic Hormone)|Blood|Purple|Nuclear Medicine
+Hemoglobin Electrophoresis|Blood|Purple|Hematology
+Hgb electrophoresis|Blood|Purple|Hematology
 CD4|Blood|Purple|SAGIP
 Viral Load|Blood|Purple|SAGIP
 Resistance Test|Blood|Purple|SAGIP
@@ -435,9 +438,17 @@ You MUST STRICTLY FOLLOW ALL RULES BELOW:
     - If 'MMR panel' is requested, output: 'Measles, Mumps, Rubeola IgG'.
     - If 'TORCH panel' is requested, output: 'Toxoplasma IgG, Toxoplasma IgM, Rubella IgG, Rubella IgM, CMV IgG, CMV IgM, HSV 1 IgG, HSV 2 IgG'.
 - **SPEP/UPEP Rule:**
-    - If 'SPEP' is requested, you MUST also include 'Serum Total Protein' on the same form.
-    - If 'UPEP' is requested, you MUST also include 'Total Urine Protein' on the same form.
-- Specimen Prefix Rule (Non-Blood): For all non-blood specimens (**including ETA, Pleural Fluid, Ascitic Fluid, and Pericardial Fluid**), prefix the test name with the Specimen Type (e.g., Stool DFS, Pleural Fluid TP).
+    - If 'SPEP' or 'Serum Protein Electrophoresis' is requested, you MUST also include 'Serum Total Protein' on the same form.
+    - If 'UPEP' or 'Urine Protein Electrophoresis' is requested, you MUST also include 'Total Urine Protein' on the same form.
+- **Specimen Prefix Rule (Non-Blood):** For all non-blood specimens (**including ETA, Pleural Fluid, Ascitic Fluid, and Pericardial Fluid**), prefix the test name with the Specimen Type (e.g., Stool DFS, Pleural Fluid TP).
+- **Fasting Rules:**
+    - If 'FBS' or 'Lipid profile' is requested, the reminder should reflect 10-12 hours fasting.
+    - If 'Serum FLC', 'Serum Iron', or 'dTIBC' is requested, fasting of 4-6 hours is required.
+- **Renaming Rules:**
+    - 'Serum Free Light Chain' and 'Free Light Chain' refer to 'Serum FLC'.
+    - 'Hgb Electrophoresis' and 'Hemoglobin Electrophoresis' refer to 'Hemoglobin Electrophoresis'.
+    - 'SPEP' and 'Serum Protein Electrophoresis' refer to 'SPEP'.
+    - 'UPEP' and 'Urine Protein Electrophoresis' refer to 'UPEP'.
 - **ETA Handling:** If the original text mentions 'Endotracheal Aspirate' or 'ETA', the Specimen Type MUST be output as **'ETA'** (not Sputum). All associated tests must use the 'ETA' prefix (e.g., ETA GS/CS).
 - Urinalysis and Fecalysis Exception: If any test from the Urinalysis Form is requested, the Lab Requests field for that line must contain only the word: Urinalysis. Do not include the "Urine" prefix. Similar with fecalysis, do not include the "Stool" prefix
 - Urine Prefix Rule: All other Urine tests (e.g., Chemistry, Microbiology, Clinical Microscopy) must use the Urine prefix (e.g., Urine Na, Urine Crea, Urine GS/CS, Urine RBC Morphology).
@@ -445,7 +456,7 @@ You MUST STRICTLY FOLLOW ALL RULES BELOW:
 -- LAB TEST LOOKUP TABLE (Table Basis) --
 ${LAB_TEST_LOOKUP}`;
 
-export const CUP_SPECIMENS = ['sputum', 'stool', 'urine', 'eta', 'pleural fluid', 'ascitic fluid', 'pericardial fluid', 'corneal scraping', 'exudate', 'milk', 'environmental'];
+export const CUP_SPECIMENS = ['sputum', 'stool', 'urine', 'eta', 'csf', 'pf', 'af', 'pcf', 'pleural fluid', 'ascitic fluid', 'pericardial fluid', 'body fluid', 'corneal scraping', 'exudate', 'milk', 'environmental'];
 
 export interface LookupEntry {
   testName: string;

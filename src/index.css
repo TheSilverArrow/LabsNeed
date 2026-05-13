@@ -6,7 +6,7 @@
 
 @layer base {
   html, body {
-    @apply h-full overflow-hidden;
+    @apply min-h-full;
   }
   html {
     @apply text-[14px] md:text-[16px];
@@ -61,7 +61,7 @@ label, h3, .control-label, .instruction-text2, .instruction-text3 {
 }
 
 .input-section {
-  @apply bg-white px-3 md:px-[25px] pb-[5px] rounded-[20px] shadow-[0_8px_20px_rgba(0,0,0,0.1)] mb-0 relative border-t-[10px] border-t-[#334155] text-base md:text-[25px] z-0 transition-all duration-300;
+  @apply bg-white px-3 md:px-[25px] pb-[5px] rounded-[20px] shadow-[0_8px_20px_rgba(0,0,0,0.1)] mb-0 relative border-t-[10px] border-t-[#334155] text-base z-0 transition-all duration-300;
 }
 .dark .input-section {
   @apply bg-[#1e293b] border-t-[#64748b] shadow-[0_8px_30px_rgba(0,0,0,0.3)];

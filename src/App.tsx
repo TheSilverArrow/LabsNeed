@@ -42,7 +42,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-full flex flex-col overflow-hidden box-border">
+    <div className="min-h-screen flex flex-col box-border">
       {/* Desktop Navigation */}
       {!isModalOpen && (
         <nav id="main-nav-bar" className="hidden md:flex ml-10 mt-5 pb-0 items-end gap-1 flex-shrink-0">
@@ -94,14 +94,14 @@ export default function App() {
         </div>
       )}
 
-      <main id="main-content-area" className="flex-1 flex flex-col min-h-0 overflow-hidden bg-transparent">
-        <div className={`flex-1 overflow-y-auto scroll-smooth px-2 pb-2 md:px-5 md:pb-5 pt-0 md:pt-0 ${activeTab === 'form-tool-content' ? 'flex flex-col' : 'hidden'}`}>
+      <main id="main-content-area" className="flex-1 flex flex-col min-h-0 bg-transparent">
+        <div className={`flex-1 scroll-smooth px-2 pb-2 md:px-5 md:pb-5 pt-0 md:pt-0 ${activeTab === 'form-tool-content' ? 'flex flex-col' : 'hidden'}`}>
           <TalongTab />
         </div>
-        <div className={`flex-1 overflow-hidden pt-0 md:pt-0 ${activeTab === 'second-tool' ? 'flex flex-col' : 'hidden'}`}>
+        <div className={`flex-1 pt-0 md:pt-0 ${activeTab === 'second-tool' ? 'flex flex-col' : 'hidden'}`}>
           <PghMapTab />
         </div>
-        <div className={`flex-1 overflow-y-auto scroll-smooth px-2 pb-2 md:px-5 md:pb-5 pt-0 md:pt-0 ${activeTab === 'third-tool' ? 'flex flex-col' : 'hidden'}`}>
+        <div className={`flex-1 scroll-smooth px-2 pb-2 md:px-5 md:pb-5 pt-0 md:pt-0 ${activeTab === 'third-tool' ? 'flex flex-col' : 'hidden'}`}>
           <PrintablesTab onModalToggle={setIsModalOpen} />
         </div>
       </main>
